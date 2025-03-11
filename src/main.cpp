@@ -1,51 +1,71 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include <SoftwareSerial.h>
 #include <PZEM004Tv30.h>
 
 #define PZEM_TX 2
 #define PZEM_RX 3
+#define I2C_SLAVE_ADDRESS 0x08
 
 SoftwareSerial SoftSerial(PZEM_TX, PZEM_RX);
 PZEM004Tv30 pzem(SoftSerial);
 
+float voltage = 0;
+float current = 0;
+float power = 0;
+float energy = 0;
+float frequency = 0;
+float pf = 0;
+unsigned long lastMillis = 0;
+
+void requestEvent() {
+  char buffer[100];
+
+  if (voltage < 0) {
+    snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
+  } else {
+    snprintf(buffer, sizeof(buffer), "$%.2f,%.2f,%.2f,%.2f,%.2f,%.2f#", 
+             (double)voltage, (double)current, (double)power, 
+             (double)energy, (double)frequency, (double)pf);
+  }
+  
+  Wire.write(buffer);
+}
+
 void setup() {
   Serial.begin(9600);
   SoftSerial.begin(9600);
+  Wire.begin(I2C_SLAVE_ADDRESS);
+  Wire.onRequest(requestEvent);
 }
 
 void loop() {
-  // Read the data from the sensor
-  float voltage = pzem.voltage();
-  float current = pzem.current();
-  float power = pzem.power();
-  float energy = pzem.energy();
-  float frequency = pzem.frequency();
-  float pf = pzem.pf();
+  if (millis() - lastMillis >= 2000) {
+    voltage = pzem.voltage();
+    if (isnan(voltage)) voltage = -1;
 
-  // Check if the data is valid
-  if(isnan(voltage)){
-      Serial.println("Error reading voltage");
-  } else if (isnan(current)) {
-      Serial.println("Error reading current");
-  } else if (isnan(power)) {
-      Serial.println("Error reading power");
-  } else if (isnan(energy)) {
-      Serial.println("Error reading energy");
-  } else if (isnan(frequency)) {
-      Serial.println("Error reading frequency");
-  } else if (isnan(pf)) {
-      Serial.println("Error reading power factor");
-  } else {
+    current = pzem.current();
+    if (isnan(current)) current = -1;
 
-      // Print the values to the Serial console
-      Serial.print("Voltage: ");      Serial.print(voltage);      Serial.println("V");
-      Serial.print("Current: ");      Serial.print(current);      Serial.println("A");
-      Serial.print("Power: ");        Serial.print(power);        Serial.println("W");
-      Serial.print("Energy: ");       Serial.print(energy,3);     Serial.println("kWh");
-      Serial.print("Frequency: ");    Serial.print(frequency, 1); Serial.println("Hz");
-      Serial.print("PF: ");           Serial.println(pf);
+    power = pzem.power();
+    if (isnan(power)) power = -1;
+
+    energy = pzem.energy();
+    if (isnan(energy)) energy = -1;
+
+    frequency = pzem.frequency();
+    if (isnan(frequency)) frequency = -1;
+
+    pf = pzem.pf();
+    if (isnan(pf)) pf = -1;
+
+    lastMillis = millis();
+
+    Serial.print("Voltage: "); Serial.print(voltage); Serial.print(", ");
+    Serial.print("Current: "); Serial.print(current); Serial.print(", ");
+    Serial.print("Power: "); Serial.print(power); Serial.print(", ");
+    Serial.print("Energy: "); Serial.print(energy); Serial.print(", ");
+    Serial.print("Frequency: "); Serial.print(frequency); Serial.print(", ");
+    Serial.print("PF: "); Serial.println(pf);
   }
-
-  Serial.println();
-  delay(2000);
 }
