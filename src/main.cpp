@@ -10,28 +10,16 @@
 SoftwareSerial SoftSerial(PZEM_TX, PZEM_RX);
 PZEM004Tv30 pzem(SoftSerial);
 
+double voltage = 0;
+double current = 0;
+double power = 0;
+double energy = 0;
+double frequency = 0;
+double pf = 0;
 unsigned long lastMillis = 0;
 
 void requestEvent() {
   char buffer[150];
-
-  double voltage = pzem.voltage();
-  if (isnan(voltage)) voltage = -1;
-
-  double current = pzem.current();
-  if (isnan(current)) current = -1;
-
-  double power = pzem.power();
-  if (isnan(power)) power = -1;
-
-  double energy = pzem.energy();
-  if (isnan(energy)) energy = -1;
-
-  double frequency = pzem.frequency();
-  if (isnan(frequency)) frequency = -1;
-
-  double pf = pzem.pf();
-  if (isnan(pf)) pf = -1;
 
   if (voltage < 0) {
     snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
@@ -66,32 +54,32 @@ void setup() {
 }
 
 void loop() {
-  // if (millis() - lastMillis >= 2000) {
-  //   voltage = pzem.voltage();
-  //   if (isnan(voltage)) voltage = -1;
+  if (millis() - lastMillis >= 5000) {
+    voltage = pzem.voltage();
+    if (isnan(voltage)) voltage = -1;
 
-  //   current = pzem.current();
-  //   if (isnan(current)) current = -1;
+    current = pzem.current();
+    if (isnan(current)) current = -1;
 
-  //   power = pzem.power();
-  //   if (isnan(power)) power = -1;
+    power = pzem.power();
+    if (isnan(power)) power = -1;
 
-  //   energy = pzem.energy();
-  //   if (isnan(energy)) energy = -1;
+    energy = pzem.energy();
+    if (isnan(energy)) energy = -1;
 
-  //   frequency = pzem.frequency();
-  //   if (isnan(frequency)) frequency = -1;
+    frequency = pzem.frequency();
+    if (isnan(frequency)) frequency = -1;
 
-  //   pf = pzem.pf();
-  //   if (isnan(pf)) pf = -1;
+    pf = pzem.pf();
+    if (isnan(pf)) pf = -1;
 
-  //   lastMillis = millis();
+    lastMillis = millis();
 
-  //   Serial.print("Voltage: "); Serial.print(voltage); Serial.print(", ");
-  //   Serial.print("Current: "); Serial.print(current); Serial.print(", ");
-  //   Serial.print("Power: "); Serial.print(power); Serial.print(", ");
-  //   Serial.print("Energy: "); Serial.print(energy); Serial.print(", ");
-  //   Serial.print("Frequency: "); Serial.print(frequency); Serial.print(", ");
-  //   Serial.print("PF: "); Serial.println(pf);
-  // }
+    Serial.print("Voltage: "); Serial.print(voltage); Serial.print(", ");
+    Serial.print("Current: "); Serial.print(current); Serial.print(", ");
+    Serial.print("Power: "); Serial.print(power); Serial.print(", ");
+    Serial.print("Energy: "); Serial.print(energy); Serial.print(", ");
+    Serial.print("Frequency: "); Serial.print(frequency); Serial.print(", ");
+    Serial.print("PF: "); Serial.println(pf);
+  }
 }
