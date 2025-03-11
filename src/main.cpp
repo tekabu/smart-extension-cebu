@@ -19,18 +19,27 @@ double pf = 0;
 unsigned long lastMillis = 0;
 
 void requestEvent() {
-  char buffer[150]; // Increase buffer size
+  char buffer[150];
 
-  char voltageStr[10], currentStr[10], powerStr[10], energyStr[10], frequencyStr[10], pfStr[10];
-  dtostrf(voltage, 4, 2, voltageStr);
-  dtostrf(current, 4, 2, currentStr);
-  dtostrf(power, 4, 2, powerStr);
-  dtostrf(energy, 4, 2, energyStr);
-  dtostrf(frequency, 4, 2, frequencyStr);
-  dtostrf(pf, 4, 2, pfStr);
-
-  int len = 0;
-  len += snprintf(buffer + len, sizeof(buffer) - len, "$%s,%s,%s,%s,%s,%s#", voltageStr, currentStr, powerStr, energyStr, frequencyStr, pfStr);
+  if (voltage < 0) {
+    snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
+  } else {
+    String bufferStr = "$";
+    bufferStr += String(voltage, 2);
+    bufferStr += ",";
+    bufferStr += String(current, 2);
+    bufferStr += ",";
+    bufferStr += String(power, 2);
+    bufferStr += ",";
+    bufferStr += String(energy, 2);
+    bufferStr += ",";
+    bufferStr += String(frequency, 2);
+    bufferStr += ",";
+    bufferStr += String(pf, 2);
+    bufferStr += "#";
+    
+    snprintf(buffer, sizeof(buffer), bufferStr.c_str());
+  }
   Wire.write(buffer);
 
   Serial.print("Final Formatted Buffer: ");
