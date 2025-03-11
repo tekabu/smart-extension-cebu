@@ -24,9 +24,23 @@ void requestEvent() {
   if (voltage < 0) {
     snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
   } else {
-    snprintf(buffer, sizeof(buffer), "$%.2f,%.2f,%.2f,%.2f,%.2f,%.2f#", 
-             (double)voltage, (double)current, (double)power, 
-             (double)energy, (double)frequency, (double)pf);
+    char buffer[100];
+    char voltageStr[10];
+    char currentStr[10];
+    char powerStr[10];
+    char energyStr[10];
+    char frequencyStr[10];
+    char pfStr[10];
+    
+    dtostrf(voltage, 6, 2, voltageStr); // width: 6, precision: 2
+    dtostrf(current, 6, 2, currentStr);
+    dtostrf(power, 6, 2, powerStr);
+    dtostrf(energy, 6, 2, energyStr);
+    dtostrf(frequency, 6, 2, frequencyStr);
+    dtostrf(pf, 6, 2, pfStr);
+    
+    snprintf(buffer, sizeof(buffer), "$%s,%s,%s,%s,%s,%s#",
+             voltageStr, currentStr, powerStr, energyStr, frequencyStr, pfStr);
   }
   
   Wire.write(buffer);
