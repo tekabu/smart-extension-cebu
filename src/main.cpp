@@ -31,6 +31,8 @@ void requestEvent() {
     if (len >= sizeof(buffer)) {
       Serial.println("Error: Formatted string is too large for the buffer!");
       snprintf(buffer, sizeof(buffer), "$ERROR#");
+    } else {
+      Serial.println("Buffer sent");
     }
   }
   
