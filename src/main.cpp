@@ -36,6 +36,7 @@ void requestEvent() {
     }
   }
   
+  Serial.println(buffer);
   Wire.write(buffer);
 }
 
