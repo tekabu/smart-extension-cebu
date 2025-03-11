@@ -19,26 +19,19 @@ float pf = 0;
 unsigned long lastMillis = 0;
 
 void requestEvent() {
-  char buffer[50];
+  char buffer[100];
 
   if (voltage < 0) {
     snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
   } else {
-    String bufferStr = "$";
-    bufferStr += String(voltage, 2);
-    bufferStr += ",";
-    bufferStr += String(current, 2);
-    bufferStr += ",";
-    bufferStr += String(power, 2);
-    bufferStr += ",";
-    bufferStr += String(energy, 2);
-    bufferStr += ",";
-    bufferStr += String(frequency, 2);
-    bufferStr += ",";
-    bufferStr += String(pf, 2);
-    bufferStr += "#";
-
-    bufferStr.toCharArray(buffer, sizeof(buffer));
+    int len = snprintf(buffer, sizeof(buffer), 
+                        "$%.2f,%.2f,%.2f,%.2f,%.2f,%.2f#", 
+                        voltage, current, power, energy, frequency, pf);
+    
+    if (len >= sizeof(buffer)) {
+      Serial.println("Error: Formatted string is too large for the buffer!");
+      snprintf(buffer, sizeof(buffer), "$ERROR#");
+    }
   }
   
   Wire.write(buffer);
