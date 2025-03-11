@@ -10,35 +10,31 @@
 SoftwareSerial SoftSerial(PZEM_TX, PZEM_RX);
 PZEM004Tv30 pzem(SoftSerial);
 
-float voltage = 0;
-float current = 0;
-float power = 0;
-float energy = 0;
-float frequency = 0;
-float pf = 0;
+double voltage = 0;
+double current = 0;
+double power = 0;
+double energy = 0;
+double frequency = 0;
+double pf = 0;
 unsigned long lastMillis = 0;
 
 void requestEvent() {
-  char buffer[100];
+  char buffer[150]; // Increase buffer size
 
-  if (voltage < 0) {
-    snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
-  } else {
-    int len = snprintf(buffer, sizeof(buffer), 
-                    "$%.2f,%.2f,%.2f,%.2f,%.2f,%.2f#", 
-                    (double)voltage, (double)current, (double)power, 
-                    (double)energy, (double)frequency, (double)pf);
-    
-    if (len >= static_cast<int>(sizeof(buffer))) {
-      Serial.println("Error: Formatted string is too large for the buffer!");
-      snprintf(buffer, sizeof(buffer), "$ERROR#");
-    } else {
-      Serial.println("Buffer sent");
-    }
-  }
-  
-  Serial.println(buffer);
+  char voltageStr[10], currentStr[10], powerStr[10], energyStr[10], frequencyStr[10], pfStr[10];
+  dtostrf(voltage, 4, 2, voltageStr);
+  dtostrf(current, 4, 2, currentStr);
+  dtostrf(power, 4, 2, powerStr);
+  dtostrf(energy, 4, 2, energyStr);
+  dtostrf(frequency, 4, 2, frequencyStr);
+  dtostrf(pf, 4, 2, pfStr);
+
+  int len = 0;
+  len += snprintf(buffer + len, sizeof(buffer) - len, "$%s,%s,%s,%s,%s,%s#", voltageStr, currentStr, powerStr, energyStr, frequencyStr, pfStr);
   Wire.write(buffer);
+
+  Serial.print("Final Formatted Buffer: ");
+  Serial.println(buffer);
 }
 
 void setup() {
