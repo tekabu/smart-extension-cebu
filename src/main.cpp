@@ -25,10 +25,11 @@ void requestEvent() {
     snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
   } else {
     int len = snprintf(buffer, sizeof(buffer), 
-                        "$%.2f,%.2f,%.2f,%.2f,%.2f,%.2f#", 
-                        voltage, current, power, energy, frequency, pf);
+                    "$%.2f,%.2f,%.2f,%.2f,%.2f,%.2f#", 
+                    (double)voltage, (double)current, (double)power, 
+                    (double)energy, (double)frequency, (double)pf);
     
-    if (len >= sizeof(buffer)) {
+    if (len >= static_cast<int>(sizeof(buffer))) {
       Serial.println("Error: Formatted string is too large for the buffer!");
       snprintf(buffer, sizeof(buffer), "$ERROR#");
     } else {
