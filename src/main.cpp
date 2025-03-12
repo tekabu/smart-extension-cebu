@@ -15,7 +15,7 @@
 #define FUNC_NORMAL 0
 #define FUNC_PZEM1 1
 #define FUNC_PZEM2 2
-#define LEVEL_SELECT_FUNC 1
+#define LEVEL_SELECT_FUNC 0
 #define LEVEL_SELECT_PARAM1 1
 #define LEVEL_SELECT_PARAM2 2
 
@@ -44,8 +44,8 @@ const int nominalResistance = 10000; // 10k ohms
 const int nominalTemperature = 25;   // 25°C is the nominal temperature for the thermistor
 const int bCoefficient = 3950;       // B coefficient for the thermistor (often provided in datasheet)
 
-int function_index = 0;
-int level_index = 0;
+int function_index = FUNC_NORMAL;
+int level_index = LEVEL_SELECT_FUNC;
 
 void click1() {
   Serial.println(F("Button 1"));
