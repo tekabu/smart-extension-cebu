@@ -6,7 +6,7 @@
 #define PZEM_SERIAL2 Serial2
 
 PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 double voltage[] = {0, 0};
 double current[] = {0, 0};
@@ -16,7 +16,6 @@ double frequency[] = {0, 0};
 double pf[] = {0, 0};
 unsigned long lastMillis = 0;
 unsigned long nextReadMillis = 3000;
-int displayIndex = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -61,18 +60,22 @@ void display_pzem() {
 void display_pzem_lcd() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print(F("PZEM"));
-  lcd.print(displayIndex + 1);
-  lcd.print(F(" V:"));
-  lcd.print(voltage[displayIndex]);
+  lcd.print(F("PZEM1 V:"));
+  lcd.print(voltage[0]);
   lcd.setCursor(0, 1);
   lcd.print(F("I:"));
-  lcd.print(current[displayIndex]);
+  lcd.print(current[0]);
   lcd.print(F(" P:"));
-  lcd.print(power[displayIndex]);
-  bool i = (bool)displayIndex;
-  i = not(i);
-  displayIndex = (int)i;
+  lcd.print(power[0]);
+
+  lcd.setCursor(0, 2);
+  lcd.print(F("PZEM2 V:"));
+  lcd.print(voltage[1]);
+  lcd.setCursor(0, 3);
+  lcd.print(F("I:"));
+  lcd.print(current[1]);
+  lcd.print(F(" P:"));
+  lcd.print(power[1]);
 }
 
 void loop() {
