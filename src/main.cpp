@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <OneButton.h>
 #include <PZEM004Tv30.h>
 #include <LiquidCrystal_I2C.h>
 
@@ -13,7 +14,12 @@
 
 PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
 LiquidCrystal_I2C lcd(0x27, 20, 4);
-const int buttons[] = { BUTTON1, BUTTON2, BUTTON3, BUTTON4, BUTTON5 };
+
+OneButton button1(BUTTON1, false);
+OneButton button2(BUTTON2, false);
+OneButton button3(BUTTON3, false);
+OneButton button4(BUTTON4, false);
+OneButton button5(BUTTON5, false);
 
 double voltage[] = {0, 0};
 double current[] = {0, 0};
@@ -31,14 +37,41 @@ const int nominalResistance = 10000; // 10k ohms
 const int nominalTemperature = 25;   // 25°C is the nominal temperature for the thermistor
 const int bCoefficient = 3950;       // B coefficient for the thermistor (often provided in datasheet)
 
+void click1() {
+  Serial.println("Button 1 click.");
+}
+
+void click2() {
+  Serial.println("Button 2 click.");
+}
+
+void click3() {
+  Serial.println("Button 3 click.");
+}
+
+void longPressStart3() {
+  Serial.println("Button 3 longPress start");
+} 
+
+void click4() {
+  Serial.println("Button 4 click.");
+}
+
+void click5() {
+  Serial.println("Button 5 click.");
+}
+
 void setup() {
   Serial.begin(9600);
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
 
-  for (int i = 0; i <= 5; i++) {
-    pinMode(buttons[i], INPUT);
-  }
+  button1.attachClick(click1);
+  button2.attachClick(click2);
+  button3.attachClick(click3);
+  button1.attachLongPressStart(longPressStart3);
+  button4.attachClick(click4);
+  button5.attachClick(click5);
 
   lcd.init();
   lcd.backlight();
@@ -114,24 +147,6 @@ void read_thermistor() {
   temperature = abs(temperature);
 }
 
-void read_buttons() {
-  while (digitalRead(BUTTON1) == HIGH) {
-    Serial.println("Button 1 active");
-  }
-  while (digitalRead(BUTTON2) == HIGH) {
-    Serial.println("Button 2 active");
-  }
-  while (digitalRead(BUTTON3) == HIGH) {
-    Serial.println("Button 3 active");
-  }
-  while (digitalRead(BUTTON4) == HIGH) {
-    Serial.println("Button 4 active");
-  }
-  while (digitalRead(BUTTON5) == HIGH) {
-    Serial.println("Button 5 active");
-  }
-}
-
 void loop() {
   if (millis() - lastMillis >= nextReadMillis) {
     read_pzem();
@@ -140,5 +155,10 @@ void loop() {
     display_pzem_lcd();
     lastMillis = millis();
   }
-  read_buttons();
+  button1.tick();
+  button2.tick();
+  button3.tick();
+  button4.tick();
+  button5.tick();
+  delay(10);
 }
