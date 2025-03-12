@@ -310,6 +310,11 @@ void setup()
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
 
+  EEPROM.write(1, 150);
+  EEPROM.write(2, 250);
+  EEPROM.write(3, 123);
+  EEPROM.write(4, 12);
+
   th_voltage[0] = EEPROM.read(1);
   th_voltage[1] = EEPROM.read(11);
   th_current[0] = EEPROM.read(2);
@@ -321,12 +326,25 @@ void setup()
   th_temperature[0] = EEPROM.read(5);
   th_temperature[1] = EEPROM.read(15);
 
-  EEPROM.write(1, 150);
+  int test1 = 0;
+  int test2 = 0;
+  int test3 = 0;
+  int test4 = 0;
 
-  int test = 0;
-  EEPROM.get(1, test);
+  EEPROM.get(1, test1);
+  EEPROM.get(1, test2);
+  EEPROM.get(1, test3);
+  EEPROM.get(1, test4);
+
   Serial.println(th_voltage[0]);
-  Serial.println(test);
+  Serial.println(th_current[0]);
+  Serial.println(th_power[0]);
+  Serial.println(th_energy[0]);
+  Serial.println("---");
+  Serial.println(test1);
+  Serial.println(test2);
+  Serial.println(test3);
+  Serial.println(test4);
 
   while (true)
   {
