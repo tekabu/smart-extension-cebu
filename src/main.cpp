@@ -43,6 +43,8 @@ float temperature = 0;
 unsigned long lastMillis = 0;
 unsigned long nextReadMillis = 3000;
 
+String lcd_empty_row = "                    ";
+
 // Constants for the thermistor (for a 10k NTC thermistor)
 const float referenceVoltage = 5.0;  // Arduino reference voltage
 const int nominalResistance = 10000; // 10k ohms
@@ -52,6 +54,12 @@ const int bCoefficient = 3950;       // B coefficient for the thermistor (often 
 int function_index = FUNC_NORMAL;
 int level_index = LEVEL_SELECT_FUNC;
 int param_index = PARAM_VOLTAGE;
+
+unsigned int th_voltage[] = {0, 0};
+unsigned int th_current[] = {0, 0};
+unsigned int th_power[] = {0, 0};
+unsigned int th_energy[] = {0, 0};
+unsigned int th_temperature[] = {0, 0};
 
 void click1() {
   Serial.println(F("Button 1"));
@@ -90,18 +98,28 @@ void click1() {
     if (param_index == PARAM_VOLTAGE) {
       param_index = PARAM_CURRENT;
       lcd.print(F("CURRENT"));
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 -1]));
     } else if (param_index == PARAM_CURRENT) {
       param_index = PARAM_POWER;
       lcd.print(F("POWER"));
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 -1]));
     } else if (param_index == PARAM_POWER) {
       param_index = PARAM_ENERGY;
       lcd.print(F("ENERGY"));
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 -1]));
     } else if (param_index == PARAM_ENERGY) {
       param_index = PARAM_TEMPERATURE;
       lcd.print(F("TEMPERATURE"));
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 -1]));
     } else {
       param_index = PARAM_VOLTAGE;
       lcd.print(F("VOLTAGE"));
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
     }
   }
 }
@@ -122,15 +140,95 @@ void click2() {
     }
     lcd.setCursor(0, 1);
     lcd.print(F("VOLTAGE"));
+    lcd.setCursor(0, 2);
+    lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
   }
 }
 
 void click3() {
   Serial.println(F("Button 3"));
+  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2) {
+    lcd.setCursor(0, 2);
+    lcd.print(lcd_empty_row);
+
+    if (param_index == PARAM_VOLTAGE) 
+    {
+      th_voltage[LEVEL_SELECT_PARAM1 -1]++;
+      th_voltage[LEVEL_SELECT_PARAM1 -1] = max(th_voltage[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else if (param_index == PARAM_CURRENT) 
+    {
+      th_current[LEVEL_SELECT_PARAM1 -1]++;
+      th_current[LEVEL_SELECT_PARAM1 -1] = max(th_current[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else if (param_index == PARAM_POWER) 
+    {
+      th_power[LEVEL_SELECT_PARAM1 -1]++;
+      th_power[LEVEL_SELECT_PARAM1 -1] = max(th_power[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else if (param_index == PARAM_ENERGY) 
+    {
+      th_energy[LEVEL_SELECT_PARAM1 -1]++;
+      th_energy[LEVEL_SELECT_PARAM1 -1] = max(th_energy[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else {
+      th_temperature[LEVEL_SELECT_PARAM1 -1]++;
+      th_temperature[LEVEL_SELECT_PARAM1 -1] = max(th_temperature[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 -1]));
+    }
+  }
 }
 
 void click4() {
   Serial.println(F("Button 4"));
+  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2) {
+    lcd.setCursor(0, 2);
+    lcd.print(lcd_empty_row);
+
+    if (param_index == PARAM_VOLTAGE) 
+    {
+      th_voltage[LEVEL_SELECT_PARAM1 -1]--;
+      th_voltage[LEVEL_SELECT_PARAM1 -1] = min(th_voltage[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else if (param_index == PARAM_CURRENT) 
+    {
+      th_current[LEVEL_SELECT_PARAM1 -1]--;
+      th_current[LEVEL_SELECT_PARAM1 -1] = min(th_current[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else if (param_index == PARAM_POWER) 
+    {
+      th_power[LEVEL_SELECT_PARAM1 -1]--;
+      th_power[LEVEL_SELECT_PARAM1 -1] = min(th_power[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else if (param_index == PARAM_ENERGY) 
+    {
+      th_energy[LEVEL_SELECT_PARAM1 -1]--;
+      th_energy[LEVEL_SELECT_PARAM1 -1] = min(th_energy[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 -1]));
+    } 
+    else {
+      th_temperature[LEVEL_SELECT_PARAM1 -1]--;
+      th_temperature[LEVEL_SELECT_PARAM1 -1] = min(th_temperature[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 -1]));
+    }
+  }
 }
 
 void click5() {
