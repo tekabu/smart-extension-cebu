@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include <PZEM004Tv30.h>
+#include <LiquidCrystal_I2C.h>
 
 #define PZEM_SERIAL1 Serial1
 #define PZEM_SERIAL2 Serial2
 
 PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 double voltage[] = {0, 0};
 double current[] = {0, 0};
@@ -19,6 +21,11 @@ void setup() {
   Serial.begin(9600);
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(3,0);
+  lcd.print("Hello, world!");
 }
 
 void read_pzem() {
@@ -40,13 +47,13 @@ void read_pzem() {
 
 void display_pzem() {
   for (int i = 0; i < 2; i++) {
-    Serial.print("PZEM"); Serial.print(i + 1); Serial.println(" -> ");
-    Serial.print("Voltage: "); Serial.print(voltage[i]); Serial.print(", ");
-    Serial.print("Current: "); Serial.print(current[i]); Serial.print(", ");
-    Serial.print("Power: "); Serial.print(power[i]); Serial.print(", ");
-    Serial.print("Energy: "); Serial.print(energy[i]); Serial.print(", ");
-    Serial.print("Frequency: "); Serial.print(frequency[i]); Serial.print(", ");
-    Serial.print("PF: "); Serial.println(pf[i]);
+    Serial.print(F("PZEM")); Serial.print(i + 1); Serial.println(F(" -> "));
+    Serial.print(F("Voltage: ")); Serial.print(voltage[i]); Serial.print(F(", "));
+    Serial.print(F("Current: ")); Serial.print(current[i]); Serial.print(F(", "));
+    Serial.print(F("Power: ")); Serial.print(power[i]); Serial.print(F(", "));
+    Serial.print(F("Energy: ")); Serial.print(energy[i]); Serial.print(F(", "));
+    Serial.print(F("Frequency: ")); Serial.print(frequency[i]); Serial.print(F(", "));
+    Serial.print(F("PF: ")); Serial.println(pf[i]);
   }
 }
 
