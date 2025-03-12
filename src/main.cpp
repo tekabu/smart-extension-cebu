@@ -186,9 +186,7 @@ void click3()
       if (th_voltage[LEVEL_SELECT_PARAM1 - 1] > 0)
       {
         th_voltage[LEVEL_SELECT_PARAM1 - 1]--;
-        Serial.println(th_voltage[LEVEL_SELECT_PARAM1 - 1]);
-        Serial.println(starting_index + 1);
-        EEPROM.write(th_voltage[LEVEL_SELECT_PARAM1 - 1], starting_index + 1);
+        EEPROM.write(starting_index + 1, th_voltage[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
@@ -198,7 +196,7 @@ void click3()
       if (th_current[LEVEL_SELECT_PARAM1 - 1] > 0)
       {
         th_current[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(th_current[LEVEL_SELECT_PARAM1 - 1], starting_index + 2);
+        EEPROM.write(starting_index + 2, th_current[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
@@ -208,7 +206,7 @@ void click3()
       if (th_power[LEVEL_SELECT_PARAM1 - 1] > 0)
       {
         th_power[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(th_power[LEVEL_SELECT_PARAM1 - 1], starting_index + 3);
+        EEPROM.write(starting_index + 3, th_power[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
@@ -218,7 +216,7 @@ void click3()
       if (th_energy[LEVEL_SELECT_PARAM1 - 1] > 0)
       {
         th_energy[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(th_energy[LEVEL_SELECT_PARAM1 - 1], starting_index + 4);
+        EEPROM.write(starting_index + 4, th_energy[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
@@ -228,7 +226,7 @@ void click3()
       if (th_temperature[LEVEL_SELECT_PARAM1 - 1] > 0)
       {
         th_temperature[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(th_temperature[LEVEL_SELECT_PARAM1 - 1], starting_index + 5);
+        EEPROM.write(starting_index + 5, th_temperature[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
@@ -252,7 +250,7 @@ void click4()
       if (th_voltage[LEVEL_SELECT_PARAM1 - 1] < 255)
       {
         th_voltage[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(th_voltage[LEVEL_SELECT_PARAM1 - 1], starting_index + 1);
+        EEPROM.write(starting_index + 1, th_voltage[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
@@ -262,7 +260,7 @@ void click4()
       if (th_current[LEVEL_SELECT_PARAM1 - 1] < 255)
       {
         th_current[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(th_current[LEVEL_SELECT_PARAM1 - 1], starting_index + 2);
+        EEPROM.write(starting_index + 2, th_current[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
@@ -272,7 +270,7 @@ void click4()
       if (th_power[LEVEL_SELECT_PARAM1 - 1] < 255)
       {
         th_power[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(th_power[LEVEL_SELECT_PARAM1 - 1], starting_index + 3);
+        EEPROM.write(starting_index + 3, th_power[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
@@ -282,7 +280,7 @@ void click4()
       if (th_energy[LEVEL_SELECT_PARAM1 - 1] < 255)
       {
         th_energy[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(th_energy[LEVEL_SELECT_PARAM1 - 1], starting_index + 4);
+        EEPROM.write(starting_index + 4, th_energy[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
@@ -292,7 +290,7 @@ void click4()
       if (th_temperature[LEVEL_SELECT_PARAM1 - 1] < 255)
       {
         th_temperature[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(th_temperature[LEVEL_SELECT_PARAM1 - 1], starting_index + 5);
+        EEPROM.write(starting_index + 5, th_temperature[LEVEL_SELECT_PARAM1 - 1]);
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
