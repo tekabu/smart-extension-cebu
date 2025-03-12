@@ -321,6 +321,17 @@ void setup()
   th_temperature[0] = EEPROM.read(5);
   th_temperature[1] = EEPROM.read(15);
 
+  int test = 0;
+  EEPROM.get(1, test);
+  Serial.println(th_voltage[0]);
+  Serial.println(test);
+
+  while (true)
+  {
+    delay(10);
+  }
+  
+
   button1.attachClick(click1);
   button2.attachClick(click2);
   button3.attachClick(click3);
