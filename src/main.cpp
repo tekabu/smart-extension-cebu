@@ -18,6 +18,11 @@
 #define LEVEL_SELECT_FUNC 0
 #define LEVEL_SELECT_PARAM1 1
 #define LEVEL_SELECT_PARAM2 2
+#define PARAM_VOLTAGE 0
+#define PARAM_CURRENT 1
+#define PARAM_POWER 2
+#define PARAM_ENERGY 3
+#define PARAM_TEMPERATURE 4
 
 PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -46,6 +51,7 @@ const int bCoefficient = 3950;       // B coefficient for the thermistor (often 
 
 int function_index = FUNC_NORMAL;
 int level_index = LEVEL_SELECT_FUNC;
+int param_index = PARAM_VOLTAGE;
 
 void click1() {
   Serial.println(F("Button 1"));
@@ -71,17 +77,51 @@ void click1() {
       function_index = FUNC_NORMAL;
     }
   }
+  else if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+
+    if (level_index == LEVEL_SELECT_PARAM1) {
+      lcd.print(F("SET SOCKET 1"));
+    } else {
+      lcd.print(F("SET SOCKET 2"));
+    }
+    lcd.setCursor(0, 1);
+    if (param_index == PARAM_VOLTAGE) {
+      param_index = PARAM_CURRENT;
+      lcd.print(F("CURRENT"));
+    } else if (param_index == PARAM_CURRENT) {
+      param_index = PARAM_POWER;
+      lcd.print(F("POWER"));
+    } else if (param_index == PARAM_POWER) {
+      param_index = PARAM_ENERGY;
+      lcd.print(F("ENERGY"));
+    } else if (param_index == PARAM_ENERGY) {
+      param_index = PARAM_TEMPERATURE;
+      lcd.print(F("TEMPERATURE"));
+    } else {
+      param_index = PARAM_VOLTAGE;
+      lcd.print(F("VOLTAGE"));
+    }
+  }
 }
 
 void click2() {
   Serial.println(F("Button 2"));
   if (level_index == LEVEL_SELECT_FUNC) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+
     if (function_index == FUNC_PZEM1) {
       level_index = LEVEL_SELECT_PARAM1;
+      lcd.print(F("SET SOCKET 1"));
     }
     else if (function_index == FUNC_PZEM2) {
       level_index = LEVEL_SELECT_PARAM2;
+      lcd.print(F("SET SOCKET 2"));
     }
+    lcd.setCursor(0, 1);
+    lcd.print(F("VOLTAGE"));
   }
 }
 
@@ -94,7 +134,8 @@ void click4() {
 }
 
 void click5() {
-  Serial.println(F("Button 5"));
+  function_index = FUNC_NORMAL;
+  level_index = LEVEL_SELECT_FUNC;
 }
 
 void setup() {
