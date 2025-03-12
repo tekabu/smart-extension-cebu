@@ -1,85 +1,59 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include <SoftwareSerial.h>
 #include <PZEM004Tv30.h>
 
-#define PZEM_TX 2
-#define PZEM_RX 3
-#define I2C_SLAVE_ADDRESS 0x08
+#define PZEM_SERIAL1 Serial1
+#define PZEM_SERIAL2 Serial2
 
-SoftwareSerial SoftSerial(PZEM_TX, PZEM_RX);
-PZEM004Tv30 pzem(SoftSerial);
+PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
 
-double voltage = 0;
-double current = 0;
-double power = 0;
-double energy = 0;
-double frequency = 0;
-double pf = 0;
+double voltage[] = {0, 0};
+double current[] = {0, 0};
+double power[] = {0, 0};
+double energy[] = {0, 0};
+double frequency[] = {0, 0};
+double pf[] = {0, 0};
 unsigned long lastMillis = 0;
-
-void requestEvent() {
-  char buffer[150];
-
-  if (voltage < 0) {
-    snprintf(buffer, sizeof(buffer), "$-1,-1,-1,-1,-1,-1#");
-  } else {
-    String bufferStr = "$";
-    bufferStr += String(voltage, 2);
-    bufferStr += ",";
-    bufferStr += String(current, 2);
-    bufferStr += ",";
-    bufferStr += String(power, 2);
-    bufferStr += ",";
-    bufferStr += String(energy, 2);
-    bufferStr += ",";
-    bufferStr += String(frequency, 2);
-    bufferStr += ",";
-    bufferStr += String(pf, 2);
-    bufferStr += "#";
-    
-    snprintf(buffer, sizeof(buffer), bufferStr.c_str());
-  }
-  Wire.write(buffer);
-
-  Serial.print("Final Formatted Buffer: ");
-  Serial.println(buffer);
-}
+unsigned long nextReadMillis = 3000;
 
 void setup() {
   Serial.begin(9600);
-  SoftSerial.begin(9600);
-  Wire.begin(I2C_SLAVE_ADDRESS);
-  Wire.onRequest(requestEvent);
+  PZEM_SERIAL1.begin(9600);
+  PZEM_SERIAL2.begin(9600);
+}
+
+void read_pzem() {
+  for (int i = 0; i < 2; i++) {
+    voltage[i] = pzems[i].voltage(); 
+    current[i] = pzems[i].current(); 
+    power[i] = pzems[i].power(); 
+    energy[i] = pzems[i].energy(); 
+    frequency[i] = pzems[i].frequency(); 
+    pf[i] = pzems[i].pf(); 
+    if (isnan(voltage[i])) voltage[i] = -1;
+    if (isnan(current[i])) current[i] = -1;
+    if (isnan(power[i])) power[i] = -1; 
+    if (isnan(energy[i])) energy[i] = -1;
+    if (isnan(frequency[i])) frequency[i] = -1;
+    if (isnan(pf[i])) pf[i] = -1;
+  }
+}
+
+void display_pzem() {
+  for (int i = 0; i < 2; i++) {
+    Serial.print("PZEM"); Serial.print(i + 1); Serial.println(" -> ");
+    Serial.print("Voltage: "); Serial.print(voltage[i]); Serial.print(", ");
+    Serial.print("Current: "); Serial.print(current[i]); Serial.print(", ");
+    Serial.print("Power: "); Serial.print(power[i]); Serial.print(", ");
+    Serial.print("Energy: "); Serial.print(energy[i]); Serial.print(", ");
+    Serial.print("Frequency: "); Serial.print(frequency[i]); Serial.print(", ");
+    Serial.print("PF: "); Serial.println(pf[i]);
+  }
 }
 
 void loop() {
-  if (millis() - lastMillis >= 5000) {
-    voltage = pzem.voltage();
-    if (isnan(voltage)) voltage = -1;
-
-    current = pzem.current();
-    if (isnan(current)) current = -1;
-
-    power = pzem.power();
-    if (isnan(power)) power = -1;
-
-    energy = pzem.energy();
-    if (isnan(energy)) energy = -1;
-
-    frequency = pzem.frequency();
-    if (isnan(frequency)) frequency = -1;
-
-    pf = pzem.pf();
-    if (isnan(pf)) pf = -1;
-
+  if (millis() - lastMillis >= nextReadMillis) {
+    read_pzem();
+    display_pzem();
     lastMillis = millis();
-
-    Serial.print("Voltage: "); Serial.print(voltage); Serial.print(", ");
-    Serial.print("Current: "); Serial.print(current); Serial.print(", ");
-    Serial.print("Power: "); Serial.print(power); Serial.print(", ");
-    Serial.print("Energy: "); Serial.print(energy); Serial.print(", ");
-    Serial.print("Frequency: "); Serial.print(frequency); Serial.print(", ");
-    Serial.print("PF: "); Serial.println(pf);
   }
 }
