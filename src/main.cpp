@@ -44,14 +44,17 @@ const int bCoefficient = 3950;       // B coefficient for the thermistor (often 
 int function_index = 0;
 
 void click1() {
+  Serial.println(F("Normal function"));
   function_index = FUNC_NORMAL;
 }
 
 void click2() {
+  Serial.println(F("Set parameters 1"));
   function_index = FUNC_PZEM1;
 }
 
 void click3() {
+  Serial.println(F("Set parameters 2"));
   function_index = FUNC_PZEM2;
 }
 
