@@ -69,24 +69,26 @@ void display_pzem() {
 void display_pzem_lcd() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print(F("PZEM1 V:"));
-  lcd.print(voltage[0]);
+  lcd.print(F("V1:"));
+  lcd.print(String(voltage[0], 2));
+
+  lcd.print(F(" C^:"));
+  lcd.print(String(temperature, 2));
+
   lcd.setCursor(0, 1);
-  lcd.print(F("I:"));
-  lcd.print(current[0]);
-  lcd.print(F(" P:"));
-  lcd.print(power[0]);
+  lcd.print(F("I1:"));
+  lcd.print(String(current[0], 2));
+  lcd.print(F(" P1:"));
+  lcd.print(String(power[0], 2));
 
   lcd.setCursor(0, 2);
-  lcd.print(F("PZEM2 V:"));
-  lcd.print(voltage[1]);
+  lcd.print(F("V2:"));
+  lcd.print(String(voltage[1], 2));
   lcd.setCursor(0, 3);
-  lcd.print(F("I:"));
-  lcd.print(current[1]);
-  lcd.print(F(" P:"));
-  lcd.print(power[1]);
-  lcd.print(F(" T:"));
-  lcd.print(temperature);
+  lcd.print(F("I2:"));
+  lcd.print(String(current[1], 2));
+  lcd.print(F(" P2:"));
+  lcd.print(String(power[1], 2));
 }
 
 void read_thermistor() {
