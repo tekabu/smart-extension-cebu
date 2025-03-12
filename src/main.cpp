@@ -15,6 +15,9 @@
 #define FUNC_NORMAL 0
 #define FUNC_PZEM1 1
 #define FUNC_PZEM2 2
+#define LEVEL_SELECT_FUNC 1
+#define LEVEL_SELECT_PARAM1 1
+#define LEVEL_SELECT_PARAM2 2
 
 PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -42,42 +45,56 @@ const int nominalTemperature = 25;   // 25°C is the nominal temperature for the
 const int bCoefficient = 3950;       // B coefficient for the thermistor (often provided in datasheet)
 
 int function_index = 0;
+int level_index = 0;
 
 void click1() {
-  Serial.println(F("Normal function"));
-  function_index = FUNC_NORMAL;
+  Serial.println(F("Button 1"));
+  if (level_index == LEVEL_SELECT_FUNC) {
+    if (function_index == FUNC_NORMAL) {
+      Serial.println(F("Set parameters 1"));
+      function_index = FUNC_PZEM1;
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print(F("SET SOCKET 1"));
+      lcd.setCursor(0, 1);
+      lcd.print(F("PARAMETERS"));
+    } else if (function_index == FUNC_PZEM1) {
+      Serial.println(F("Set parameters 2"));
+      function_index = FUNC_PZEM2;
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print(F("SET SOCKET 2"));
+      lcd.setCursor(0, 1);
+      lcd.print(F("PARAMETERS"));
+    } else {
+      Serial.println(F("Normal function"));
+      function_index = FUNC_NORMAL;
+    }
+  }
 }
 
 void click2() {
-  Serial.println(F("Set parameters 1"));
-  function_index = FUNC_PZEM1;
-
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(F("SET SOCKET 1"));
-  lcd.setCursor(0, 1);
-  lcd.print(F("PARAMETERS"));
-  lastMillis = millis();
+  Serial.println(F("Button 2"));
+  if (level_index == LEVEL_SELECT_FUNC) {
+    if (function_index == FUNC_PZEM1) {
+      level_index = LEVEL_SELECT_PARAM1;
+    }
+    else if (function_index == FUNC_PZEM2) {
+      level_index = LEVEL_SELECT_PARAM2;
+    }
+  }
 }
 
 void click3() {
-  Serial.println(F("Set parameters 2"));
-  function_index = FUNC_PZEM2;
-
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(F("SET SOCKET 2"));
-  lcd.setCursor(0, 1);
-  lcd.print(F("PARAMETERS"));
-  lastMillis = millis();
+  Serial.println(F("Button 3"));
 }
 
 void click4() {
-  Serial.println("Button 4 click.");
+  Serial.println(F("Button 4"));
 }
 
 void click5() {
-  Serial.println("Button 5 click.");
+  Serial.println(F("Button 5"));
 }
 
 void setup() {
