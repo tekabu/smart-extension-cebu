@@ -57,6 +57,7 @@ void display_pzem() {
     Serial.print(F("Frequency: ")); Serial.print(frequency[i]); Serial.print(F(", "));
     Serial.print(F("PF: ")); Serial.println(pf[i]);
   }
+  Serial.print(F("Temperature: ")); Serial.println(temperature);
 }
 
 void display_pzem_lcd() {
