@@ -321,6 +321,8 @@ void setup()
   th_temperature[0] = EEPROM.read(5);
   th_temperature[1] = EEPROM.read(15);
 
+  EEPROM.write(1, 150);
+
   int test = 0;
   EEPROM.get(1, test);
   Serial.println(th_voltage[0]);
