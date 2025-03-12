@@ -51,11 +51,25 @@ void click1() {
 void click2() {
   Serial.println(F("Set parameters 1"));
   function_index = FUNC_PZEM1;
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(F("SET SOCKET 1"));
+  lcd.setCursor(0, 1);
+  lcd.print(F("PARAMETERS"));
+  lastMillis = millis();
 }
 
 void click3() {
   Serial.println(F("Set parameters 2"));
   function_index = FUNC_PZEM2;
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(F("SET SOCKET 2"));
+  lcd.setCursor(0, 1);
+  lcd.print(F("PARAMETERS"));
+  lastMillis = millis();
 }
 
 void click4() {
@@ -162,25 +176,9 @@ void function_normal() {
 }
 
 void function_set_pzem1() {
-  if (millis() - lastMillis >= nextReadMillis) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(F("SET SOCKET 1"));
-    lcd.setCursor(0, 1);
-    lcd.print(F("PARAMETERS"));
-    lastMillis = millis();
-  }
 }
 
 void function_set_pzem2() {
-  if (millis() - lastMillis >= nextReadMillis) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(F("SET SOCKET 2"));
-    lcd.setCursor(0, 1);
-    lcd.print(F("PARAMETERS"));
-    lastMillis = millis();
-  }
 }
 
 void loop() {
