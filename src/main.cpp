@@ -5,9 +5,15 @@
 #define PZEM_SERIAL1 Serial1
 #define PZEM_SERIAL2 Serial2
 #define THERMISTOR_CHANNEL A0
+#define BUTTON1 8
+#define BUTTON2 9
+#define BUTTON3 10
+#define BUTTON4 11
+#define BUTTON5 12
 
 PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
 LiquidCrystal_I2C lcd(0x27, 20, 4);
+const int buttons[] = { BUTTON1, BUTTON2, BUTTON3, BUTTON4, BUTTON5 };
 
 double voltage[] = {0, 0};
 double current[] = {0, 0};
@@ -29,6 +35,10 @@ void setup() {
   Serial.begin(9600);
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
+
+  for (int i = 0; i <= 5; i++) {
+    pinMode(buttons[i], INPUT);
+  }
 
   lcd.init();
   lcd.backlight();
@@ -104,6 +114,24 @@ void read_thermistor() {
   temperature = abs(temperature);
 }
 
+void read_buttons() {
+  while (digitalRead(BUTTON1) == HIGH) {
+    Serial.println("Button 1 active");
+  }
+  while (digitalRead(BUTTON2) == HIGH) {
+    Serial.println("Button 2 active");
+  }
+  while (digitalRead(BUTTON3) == HIGH) {
+    Serial.println("Button 3 active");
+  }
+  while (digitalRead(BUTTON4) == HIGH) {
+    Serial.println("Button 4 active");
+  }
+  while (digitalRead(BUTTON5) == HIGH) {
+    Serial.println("Button 5 active");
+  }
+}
+
 void loop() {
   if (millis() - lastMillis >= nextReadMillis) {
     read_pzem();
@@ -112,4 +140,5 @@ void loop() {
     display_pzem_lcd();
     lastMillis = millis();
   }
+  read_buttons();
 }
