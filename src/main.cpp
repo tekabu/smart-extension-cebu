@@ -172,7 +172,7 @@ void click2()
 
 void click3()
 {
-  Serial.println(F("Button 4"));
+  Serial.println(F("Button 3"));
   if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
   {
     lcd.setCursor(0, 2);
@@ -186,6 +186,8 @@ void click3()
       if (th_voltage[LEVEL_SELECT_PARAM1 - 1] > 0)
       {
         th_voltage[LEVEL_SELECT_PARAM1 - 1]--;
+        Serial.println(th_voltage[LEVEL_SELECT_PARAM1 - 1]);
+        Serial.println(starting_index + 1);
         EEPROM.write(th_voltage[LEVEL_SELECT_PARAM1 - 1], starting_index + 1);
       }
       lcd.setCursor(0, 2);
@@ -236,7 +238,7 @@ void click3()
 
 void click4()
 {
-  Serial.println(F("Button 3"));
+  Serial.println(F("Button 4"));
   if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
   {
     lcd.setCursor(0, 2);
@@ -310,11 +312,6 @@ void setup()
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
 
-  EEPROM.write(1, 150);
-  EEPROM.write(2, 250);
-  EEPROM.write(3, 123);
-  EEPROM.write(4, 12);
-
   th_voltage[0] = EEPROM.read(1);
   th_voltage[1] = EEPROM.read(11);
   th_current[0] = EEPROM.read(2);
@@ -325,32 +322,6 @@ void setup()
   th_energy[1] = EEPROM.read(14);
   th_temperature[0] = EEPROM.read(5);
   th_temperature[1] = EEPROM.read(15);
-
-  int test1 = 0;
-  int test2 = 0;
-  int test3 = 0;
-  int test4 = 0;
-
-  EEPROM.get(1, test1);
-  EEPROM.get(1, test2);
-  EEPROM.get(1, test3);
-  EEPROM.get(1, test4);
-
-  Serial.println(th_voltage[0]);
-  Serial.println(th_current[0]);
-  Serial.println(th_power[0]);
-  Serial.println(th_energy[0]);
-  Serial.println("---");
-  Serial.println(test1);
-  Serial.println(test2);
-  Serial.println(test3);
-  Serial.println(test4);
-
-  while (true)
-  {
-    delay(10);
-  }
-  
 
   button1.attachClick(click1);
   button2.attachClick(click2);
