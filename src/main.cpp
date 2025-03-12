@@ -187,7 +187,7 @@ void loop() {
   if (function_index == FUNC_PZEM1) {
     function_set_pzem1();
   }
-  else if (function_index == FUNC_PZEM1) {
+  else if (function_index == FUNC_PZEM2) {
     function_set_pzem2();
   } else {
     function_normal();
