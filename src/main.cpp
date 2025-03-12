@@ -16,6 +16,7 @@ double frequency[] = {0, 0};
 double pf[] = {0, 0};
 unsigned long lastMillis = 0;
 unsigned long nextReadMillis = 3000;
+int displayIndex = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -57,10 +58,28 @@ void display_pzem() {
   }
 }
 
+void display_pzem_lcd() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(F("PZEM"));
+  lcd.print(displayIndex + 1);
+  lcd.print(F(" V:"));
+  lcd.print(voltage[displayIndex]);
+  lcd.setCursor(0, 1);
+  lcd.print(F("I:"));
+  lcd.print(current[displayIndex]);
+  lcd.print(F(" P:"));
+  lcd.print(power[displayIndex]);
+  bool i = (bool)displayIndex;
+  i = not(i);
+  displayIndex = (int)i
+}
+
 void loop() {
   if (millis() - lastMillis >= nextReadMillis) {
     read_pzem();
     display_pzem();
+    display_pzem_lcd();
     lastMillis = millis();
   }
 }
