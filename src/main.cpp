@@ -12,6 +12,10 @@
 #define BUTTON4 11
 #define BUTTON5 12
 
+#define FUNC_NORMAL 0
+#define FUNC_PZEM1 1
+#define FUNC_PZEM2 2
+
 PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
@@ -37,21 +41,19 @@ const int nominalResistance = 10000; // 10k ohms
 const int nominalTemperature = 25;   // 25°C is the nominal temperature for the thermistor
 const int bCoefficient = 3950;       // B coefficient for the thermistor (often provided in datasheet)
 
+int function_index = 0;
+
 void click1() {
-  Serial.println("Button 1 click.");
+  function_index = FUNC_NORMAL;
 }
 
 void click2() {
-  Serial.println("Button 2 click.");
+  function_index = FUNC_PZEM1;
 }
 
 void click3() {
-  Serial.println("Button 3 click.");
+  function_index = FUNC_PZEM2;
 }
-
-void longPressStart3() {
-  Serial.println("Button 3 longPress start");
-} 
 
 void click4() {
   Serial.println("Button 4 click.");
@@ -69,7 +71,6 @@ void setup() {
   button1.attachClick(click1);
   button2.attachClick(click2);
   button3.attachClick(click3);
-  button1.attachLongPressStart(longPressStart3);
   button4.attachClick(click4);
   button5.attachClick(click5);
 
@@ -147,7 +148,7 @@ void read_thermistor() {
   temperature = abs(temperature);
 }
 
-void loop() {
+void function_normal() {
   if (millis() - lastMillis >= nextReadMillis) {
     read_pzem();
     read_thermistor();
@@ -155,6 +156,40 @@ void loop() {
     display_pzem_lcd();
     lastMillis = millis();
   }
+}
+
+void function_set_pzem1() {
+  if (millis() - lastMillis >= nextReadMillis) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(F("SET SOCKET 1"));
+    lcd.setCursor(0, 1);
+    lcd.print(F("PARAMETERS"));
+    lastMillis = millis();
+  }
+}
+
+void function_set_pzem2() {
+  if (millis() - lastMillis >= nextReadMillis) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(F("SET SOCKET 2"));
+    lcd.setCursor(0, 1);
+    lcd.print(F("PARAMETERS"));
+    lastMillis = millis();
+  }
+}
+
+void loop() {
+  if (function_index == FUNC_PZEM1) {
+    function_set_pzem1();
+  }
+  else if (function_index == FUNC_PZEM1) {
+    function_set_pzem2();
+  } else {
+    function_normal();
+  }
+  
   button1.tick();
   button2.tick();
   button3.tick();
