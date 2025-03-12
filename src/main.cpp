@@ -72,7 +72,7 @@ void display_pzem_lcd() {
   lcd.print(power[displayIndex]);
   bool i = (bool)displayIndex;
   i = not(i);
-  displayIndex = (int)i
+  displayIndex = (int)i;
 }
 
 void loop() {
