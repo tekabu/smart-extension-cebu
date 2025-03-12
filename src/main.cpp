@@ -15,9 +15,15 @@ double power[] = {0, 0};
 double energy[] = {0, 0};
 double frequency[] = {0, 0};
 double pf[] = {0, 0};
-double temperature = 0;
+float temperature = 0;
 unsigned long lastMillis = 0;
 unsigned long nextReadMillis = 3000;
+
+// Constants for the thermistor (for a 10k NTC thermistor)
+const float referenceVoltage = 5.0;  // Arduino reference voltage
+const int nominalResistance = 10000; // 10k ohms
+const int nominalTemperature = 25;   // 25°C is the nominal temperature for the thermistor
+const int bCoefficient = 3950;       // B coefficient for the thermistor (often provided in datasheet)
 
 void setup() {
   Serial.begin(9600);
@@ -84,17 +90,15 @@ void display_pzem_lcd() {
 }
 
 void read_thermistor() {
-  int thermistor_adc_val;
-  double output_voltage;
-  double thermistor_resistance;
-  double therm_res_ln;
-  thermistor_adc_val = analogRead(THERMISTOR_CHANNEL);
-  output_voltage = ( (thermistor_adc_val * 5.0) / 1023.0 );
-  thermistor_resistance = ( ( 5 * ( 10.0 / output_voltage ) ) - 10 ); /* Resistance in kilo ohms */
-  thermistor_resistance = thermistor_resistance * 1000 ; /* Resistance in ohms   */
-  therm_res_ln = log(thermistor_resistance);
-  temperature = ( 1 / ( 0.001129148 + ( 0.000234125 * therm_res_ln ) + ( 0.0000000876741 * therm_res_ln * therm_res_ln * therm_res_ln ) ) ); /* Temperature in Kelvin */
-  temperature = temperature - 273.15; /* Temperature in degree Celsius */
+  int sensorValue = analogRead(THERMISTOR_CHANNEL);
+
+  float resistance = nominalResistance * (referenceVoltage / (sensorValue * (referenceVoltage / 1023.0) - 1));
+
+  // Calculate temperature using the Steinhart-Hart equation or a simpler approximation (Beta parameter method)
+  temperature = 1.0 / (1.0 / (nominalTemperature + 273.15) + log(resistance / nominalResistance) / bCoefficient);
+  
+  // Convert from Kelvin to Celsius
+  temperature -= 273.15;
 }
 
 void loop() {
