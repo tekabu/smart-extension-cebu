@@ -2,6 +2,7 @@
 #include <OneButton.h>
 #include <PZEM004Tv30.h>
 #include <LiquidCrystal_I2C.h>
+#include <EEPROM.h>
 
 #define PZEM_SERIAL1 Serial1
 #define PZEM_SERIAL2 Serial2
@@ -24,7 +25,7 @@
 #define PARAM_ENERGY 3
 #define PARAM_TEMPERATURE 4
 
-PZEM004Tv30 pzems[] = { PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2) };
+PZEM004Tv30 pzems[] = {PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2)};
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 OneButton button1(BUTTON1, false);
@@ -61,10 +62,13 @@ unsigned int th_power[] = {0, 0};
 unsigned int th_energy[] = {0, 0};
 unsigned int th_temperature[] = {0, 0};
 
-void click1() {
+void click1()
+{
   Serial.println(F("Button 1"));
-  if (level_index == LEVEL_SELECT_FUNC) {
-    if (function_index == FUNC_NORMAL) {
+  if (level_index == LEVEL_SELECT_FUNC)
+  {
+    if (function_index == FUNC_NORMAL)
+    {
       Serial.println(F("Set parameters 1"));
       function_index = FUNC_PZEM1;
       lcd.clear();
@@ -72,7 +76,9 @@ void click1() {
       lcd.print(F("SET SOCKET 1"));
       lcd.setCursor(0, 1);
       lcd.print(F("PARAMETERS"));
-    } else if (function_index == FUNC_PZEM1) {
+    }
+    else if (function_index == FUNC_PZEM1)
+    {
       Serial.println(F("Set parameters 2"));
       function_index = FUNC_PZEM2;
       lcd.clear();
@@ -80,166 +86,240 @@ void click1() {
       lcd.print(F("SET SOCKET 2"));
       lcd.setCursor(0, 1);
       lcd.print(F("PARAMETERS"));
-    } else {
+    }
+    else
+    {
       Serial.println(F("Normal function"));
       function_index = FUNC_NORMAL;
     }
   }
-  else if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2) {
+  else if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
+  {
     lcd.clear();
     lcd.setCursor(0, 0);
 
-    if (level_index == LEVEL_SELECT_PARAM1) {
+    if (level_index == LEVEL_SELECT_PARAM1)
+    {
       lcd.print(F("SET SOCKET 1"));
-    } else {
+    }
+    else
+    {
       lcd.print(F("SET SOCKET 2"));
     }
     lcd.setCursor(0, 1);
-    if (param_index == PARAM_VOLTAGE) {
+    if (param_index == PARAM_VOLTAGE)
+    {
       param_index = PARAM_CURRENT;
       lcd.print(F("CURRENT"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 -1]));
-    } else if (param_index == PARAM_CURRENT) {
+      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_CURRENT)
+    {
       param_index = PARAM_POWER;
       lcd.print(F("POWER"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 -1]));
-    } else if (param_index == PARAM_POWER) {
+      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_POWER)
+    {
       param_index = PARAM_ENERGY;
       lcd.print(F("ENERGY"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 -1]));
-    } else if (param_index == PARAM_ENERGY) {
+      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_ENERGY)
+    {
       param_index = PARAM_TEMPERATURE;
       lcd.print(F("TEMPERATURE"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 -1]));
-    } else {
+      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else
+    {
       param_index = PARAM_VOLTAGE;
       lcd.print(F("VOLTAGE"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
+      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
     }
   }
 }
 
-void click2() {
+void click2()
+{
   Serial.println(F("Button 2"));
-  if (level_index == LEVEL_SELECT_FUNC) {
+  if (level_index == LEVEL_SELECT_FUNC)
+  {
     lcd.clear();
     lcd.setCursor(0, 0);
 
-    if (function_index == FUNC_PZEM1) {
+    if (function_index == FUNC_PZEM1)
+    {
       level_index = LEVEL_SELECT_PARAM1;
       lcd.print(F("SET SOCKET 1"));
     }
-    else if (function_index == FUNC_PZEM2) {
+    else if (function_index == FUNC_PZEM2)
+    {
       level_index = LEVEL_SELECT_PARAM2;
       lcd.print(F("SET SOCKET 2"));
     }
     lcd.setCursor(0, 1);
     lcd.print(F("VOLTAGE"));
     lcd.setCursor(0, 2);
-    lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
+    lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
   }
 }
 
-void click3() {
-  Serial.println(F("Button 3"));
-  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2) {
-    lcd.setCursor(0, 2);
-    lcd.print(lcd_empty_row);
-
-    if (param_index == PARAM_VOLTAGE) 
-    {
-      th_voltage[LEVEL_SELECT_PARAM1 -1]++;
-      th_voltage[LEVEL_SELECT_PARAM1 -1] = max(th_voltage[LEVEL_SELECT_PARAM1 -1], 255);
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else if (param_index == PARAM_CURRENT) 
-    {
-      th_current[LEVEL_SELECT_PARAM1 -1]++;
-      th_current[LEVEL_SELECT_PARAM1 -1] = max(th_current[LEVEL_SELECT_PARAM1 -1], 255);
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else if (param_index == PARAM_POWER) 
-    {
-      th_power[LEVEL_SELECT_PARAM1 -1]++;
-      th_power[LEVEL_SELECT_PARAM1 -1] = max(th_power[LEVEL_SELECT_PARAM1 -1], 255);
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else if (param_index == PARAM_ENERGY) 
-    {
-      th_energy[LEVEL_SELECT_PARAM1 -1]++;
-      th_energy[LEVEL_SELECT_PARAM1 -1] = max(th_energy[LEVEL_SELECT_PARAM1 -1], 255);
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else {
-      th_temperature[LEVEL_SELECT_PARAM1 -1]++;
-      th_temperature[LEVEL_SELECT_PARAM1 -1] = max(th_temperature[LEVEL_SELECT_PARAM1 -1], 255);
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 -1]));
-    }
-  }
-}
-
-void click4() {
+void click3()
+{
   Serial.println(F("Button 4"));
-  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2) {
+  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
+  {
     lcd.setCursor(0, 2);
     lcd.print(lcd_empty_row);
 
-    if (param_index == PARAM_VOLTAGE) 
+    int starting_index = 0;
+    if (level_index == LEVEL_SELECT_PARAM2) starting_index = 10;
+
+    if (param_index == PARAM_VOLTAGE)
     {
-      th_voltage[LEVEL_SELECT_PARAM1 -1]--;
-      th_voltage[LEVEL_SELECT_PARAM1 -1] = min(th_voltage[LEVEL_SELECT_PARAM1 -1], 255);
+      if (th_voltage[LEVEL_SELECT_PARAM1 - 1] > 0)
+      {
+        th_voltage[LEVEL_SELECT_PARAM1 - 1]--;
+        EEPROM.write(th_voltage[LEVEL_SELECT_PARAM1 - 1], starting_index + 1);
+      }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else if (param_index == PARAM_CURRENT) 
+      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_CURRENT)
     {
-      th_current[LEVEL_SELECT_PARAM1 -1]--;
-      th_current[LEVEL_SELECT_PARAM1 -1] = min(th_current[LEVEL_SELECT_PARAM1 -1], 255);
+      if (th_current[LEVEL_SELECT_PARAM1 - 1] > 0)
+      {
+        th_current[LEVEL_SELECT_PARAM1 - 1]--;
+        EEPROM.write(th_current[LEVEL_SELECT_PARAM1 - 1], starting_index + 2);
+      }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else if (param_index == PARAM_POWER) 
+      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_POWER)
     {
-      th_power[LEVEL_SELECT_PARAM1 -1]--;
-      th_power[LEVEL_SELECT_PARAM1 -1] = min(th_power[LEVEL_SELECT_PARAM1 -1], 255);
+      if (th_power[LEVEL_SELECT_PARAM1 - 1] > 0)
+      {
+        th_power[LEVEL_SELECT_PARAM1 - 1]--;
+        EEPROM.write(th_power[LEVEL_SELECT_PARAM1 - 1], starting_index + 3);
+      }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else if (param_index == PARAM_ENERGY) 
+      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_ENERGY)
     {
-      th_energy[LEVEL_SELECT_PARAM1 -1]--;
-      th_energy[LEVEL_SELECT_PARAM1 -1] = min(th_energy[LEVEL_SELECT_PARAM1 -1], 255);
+      if (th_energy[LEVEL_SELECT_PARAM1 - 1] > 0)
+      {
+        th_energy[LEVEL_SELECT_PARAM1 - 1]--;
+        EEPROM.write(th_energy[LEVEL_SELECT_PARAM1 - 1], starting_index + 4);
+      }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 -1]));
-    } 
-    else {
-      th_temperature[LEVEL_SELECT_PARAM1 -1]--;
-      th_temperature[LEVEL_SELECT_PARAM1 -1] = min(th_temperature[LEVEL_SELECT_PARAM1 -1], 255);
+      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else
+    {
+      if (th_temperature[LEVEL_SELECT_PARAM1 - 1] > 0)
+      {
+        th_temperature[LEVEL_SELECT_PARAM1 - 1]--;
+        EEPROM.write(th_temperature[LEVEL_SELECT_PARAM1 - 1], starting_index + 5);
+      }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 -1]));
+      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
     }
   }
 }
 
-void click5() {
+void click4()
+{
+  Serial.println(F("Button 3"));
+  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
+  {
+    lcd.setCursor(0, 2);
+    lcd.print(lcd_empty_row);
+
+    int starting_index = 0;
+    if (level_index == LEVEL_SELECT_PARAM2) starting_index = 10;
+
+    if (param_index == PARAM_VOLTAGE)
+    {
+      if (th_voltage[LEVEL_SELECT_PARAM1 - 1] < 255)
+      {
+        th_voltage[LEVEL_SELECT_PARAM1 - 1]++;
+        EEPROM.write(th_voltage[LEVEL_SELECT_PARAM1 - 1], starting_index + 1);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_CURRENT)
+    {
+      if (th_current[LEVEL_SELECT_PARAM1 - 1] < 255)
+      {
+        th_current[LEVEL_SELECT_PARAM1 - 1]++;
+        EEPROM.write(th_current[LEVEL_SELECT_PARAM1 - 1], starting_index + 2);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_POWER)
+    {
+      if (th_power[LEVEL_SELECT_PARAM1 - 1] < 255)
+      {
+        th_power[LEVEL_SELECT_PARAM1 - 1]++;
+        EEPROM.write(th_power[LEVEL_SELECT_PARAM1 - 1], starting_index + 3);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else if (param_index == PARAM_ENERGY)
+    {
+      if (th_energy[LEVEL_SELECT_PARAM1 - 1] < 255)
+      {
+        th_energy[LEVEL_SELECT_PARAM1 - 1]++;
+        EEPROM.write(th_energy[LEVEL_SELECT_PARAM1 - 1], starting_index + 4);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
+    }
+    else
+    {
+      if (th_temperature[LEVEL_SELECT_PARAM1 - 1] < 255)
+      {
+        th_temperature[LEVEL_SELECT_PARAM1 - 1]++;
+        EEPROM.write(th_temperature[LEVEL_SELECT_PARAM1 - 1], starting_index + 5);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
+    }
+  }
+}
+
+void click5()
+{
   function_index = FUNC_NORMAL;
   level_index = LEVEL_SELECT_FUNC;
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
+
+  th_voltage[0] = EEPROM.read(1);
+  th_voltage[1] = EEPROM.read(11);
+  th_current[0] = EEPROM.read(2);
+  th_current[1] = EEPROM.read(12);
+  th_power[0] = EEPROM.read(3);
+  th_power[1] = EEPROM.read(13);
+  th_energy[0] = EEPROM.read(4);
+  th_energy[1] = EEPROM.read(14);
+  th_temperature[0] = EEPROM.read(5);
+  th_temperature[1] = EEPROM.read(15);
 
   button1.attachClick(click1);
   button2.attachClick(click2);
@@ -249,41 +329,66 @@ void setup() {
 
   lcd.init();
   lcd.backlight();
-  lcd.setCursor(3,0);
+  lcd.setCursor(3, 0);
   lcd.print("Hello, world!");
 }
 
-void read_pzem() {
-  for (int i = 0; i < 2; i++) {
-    voltage[i] = pzems[i].voltage(); 
-    current[i] = pzems[i].current(); 
-    power[i] = pzems[i].power(); 
-    energy[i] = pzems[i].energy(); 
-    frequency[i] = pzems[i].frequency(); 
-    pf[i] = pzems[i].pf(); 
-    if (isnan(voltage[i])) voltage[i] = -1;
-    if (isnan(current[i])) current[i] = -1;
-    if (isnan(power[i])) power[i] = -1; 
-    if (isnan(energy[i])) energy[i] = -1;
-    if (isnan(frequency[i])) frequency[i] = -1;
-    if (isnan(pf[i])) pf[i] = -1;
+void read_pzem()
+{
+  for (int i = 0; i < 2; i++)
+  {
+    voltage[i] = pzems[i].voltage();
+    current[i] = pzems[i].current();
+    power[i] = pzems[i].power();
+    energy[i] = pzems[i].energy();
+    frequency[i] = pzems[i].frequency();
+    pf[i] = pzems[i].pf();
+    if (isnan(voltage[i]))
+      voltage[i] = -1;
+    if (isnan(current[i]))
+      current[i] = -1;
+    if (isnan(power[i]))
+      power[i] = -1;
+    if (isnan(energy[i]))
+      energy[i] = -1;
+    if (isnan(frequency[i]))
+      frequency[i] = -1;
+    if (isnan(pf[i]))
+      pf[i] = -1;
   }
 }
 
-void display_pzem() {
-  for (int i = 0; i < 2; i++) {
-    Serial.print(F("PZEM")); Serial.print(i + 1); Serial.println(F(" -> "));
-    Serial.print(F("Voltage: ")); Serial.print(voltage[i]); Serial.print(F(", "));
-    Serial.print(F("Current: ")); Serial.print(current[i]); Serial.print(F(", "));
-    Serial.print(F("Power: ")); Serial.print(power[i]); Serial.print(F(", "));
-    Serial.print(F("Energy: ")); Serial.print(energy[i]); Serial.print(F(", "));
-    Serial.print(F("Frequency: ")); Serial.print(frequency[i]); Serial.print(F(", "));
-    Serial.print(F("PF: ")); Serial.println(pf[i]);
+void display_pzem()
+{
+  for (int i = 0; i < 2; i++)
+  {
+    Serial.print(F("PZEM"));
+    Serial.print(i + 1);
+    Serial.println(F(" -> "));
+    Serial.print(F("Voltage: "));
+    Serial.print(voltage[i]);
+    Serial.print(F(", "));
+    Serial.print(F("Current: "));
+    Serial.print(current[i]);
+    Serial.print(F(", "));
+    Serial.print(F("Power: "));
+    Serial.print(power[i]);
+    Serial.print(F(", "));
+    Serial.print(F("Energy: "));
+    Serial.print(energy[i]);
+    Serial.print(F(", "));
+    Serial.print(F("Frequency: "));
+    Serial.print(frequency[i]);
+    Serial.print(F(", "));
+    Serial.print(F("PF: "));
+    Serial.println(pf[i]);
   }
-  Serial.print(F("Temperature: ")); Serial.println(temperature);
+  Serial.print(F("Temperature: "));
+  Serial.println(temperature);
 }
 
-void display_pzem_lcd() {
+void display_pzem_lcd()
+{
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(F("V1:"));
@@ -308,21 +413,24 @@ void display_pzem_lcd() {
   lcd.print(String(power[1], 2));
 }
 
-void read_thermistor() {
+void read_thermistor()
+{
   int sensorValue = analogRead(THERMISTOR_CHANNEL);
 
   float resistance = nominalResistance * (referenceVoltage / (sensorValue * (referenceVoltage / 1023.0) - 1));
 
   // Calculate temperature using the Steinhart-Hart equation or a simpler approximation (Beta parameter method)
   temperature = 1.0 / (1.0 / (nominalTemperature + 273.15) + log(resistance / nominalResistance) / bCoefficient);
-  
+
   // Convert from Kelvin to Celsius
   temperature -= 273.15;
   temperature = abs(temperature);
 }
 
-void function_normal() {
-  if (millis() - lastMillis >= nextReadMillis) {
+void function_normal()
+{
+  if (millis() - lastMillis >= nextReadMillis)
+  {
     read_pzem();
     read_thermistor();
     display_pzem();
@@ -331,22 +439,29 @@ void function_normal() {
   }
 }
 
-void function_set_pzem1() {
+void function_set_pzem1()
+{
 }
 
-void function_set_pzem2() {
+void function_set_pzem2()
+{
 }
 
-void loop() {
-  if (function_index == FUNC_PZEM1) {
+void loop()
+{
+  if (function_index == FUNC_PZEM1)
+  {
     function_set_pzem1();
   }
-  else if (function_index == FUNC_PZEM2) {
+  else if (function_index == FUNC_PZEM2)
+  {
     function_set_pzem2();
-  } else {
+  }
+  else
+  {
     function_normal();
   }
-  
+
   button1.tick();
   button2.tick();
   button3.tick();
