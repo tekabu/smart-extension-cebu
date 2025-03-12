@@ -99,6 +99,7 @@ void read_thermistor() {
   
   // Convert from Kelvin to Celsius
   temperature -= 273.15;
+  temperature = abs(temperature);
 }
 
 void loop() {
