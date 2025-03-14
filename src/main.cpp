@@ -414,6 +414,8 @@ void display_pzem()
 
 void display_pzem_lcd()
 {
+  lcd.backlight();
+  
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(F("V1:"));
