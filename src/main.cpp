@@ -466,10 +466,10 @@ void setup()
   th_temperature[0] = EEPROM.read(5);
   th_temperature[1] = EEPROM.read(15);
 
-  button1.attachClick(click1);
-  button2.attachClick(click2);
-  button3.attachClick(click3);
-  button4.attachClick(click4);
+  button1.attachClick(relay1_on);
+  button2.attachClick(relay1_off);
+  button3.attachClick(relay2_on);
+  button4.attachClick(relay2_off);
   button5.attachClick(click5);
 
   lcd.init();
