@@ -6,7 +6,8 @@
 
 #define PZEM_SERIAL1 Serial1
 #define PZEM_SERIAL2 Serial2
-#define THERMISTOR_CHANNEL A0
+#define THERMISTOR_CHANNEL1 A0
+#define THERMISTOR_CHANNEL2 A1
 #define BUTTON1 8
 #define BUTTON2 9
 #define BUTTON3 10
@@ -14,7 +15,8 @@
 #define BUTTON5 12
 #define RELAY1 6
 #define RELAY2 7
-#define LED 5
+#define LED1 4
+#define LED2 5
 
 #define FUNC_NORMAL 0
 #define FUNC_PZEM1 1
@@ -43,7 +45,7 @@ double power[] = {0, 0};
 double energy[] = {0, 0};
 double frequency[] = {0, 0};
 double pf[] = {0, 0};
-float temperature = 0;
+float temperature[] = {0, 0};
 unsigned long lastMillis = 0;
 unsigned long nextReadMillis = 3000;
 
@@ -64,6 +66,11 @@ unsigned int th_current[] = {0, 0};
 unsigned int th_power[] = {0, 0};
 unsigned int th_energy[] = {0, 0};
 unsigned int th_temperature[] = {0, 0};
+
+int relay_pins[] = {RELAY1, RELAY2};
+int led_pins[] = {LED1, LED2};
+int relay_state[] = {HIGH, HIGH};
+int led_state[] = {LOW, LOW};
 
 void click1()
 {
@@ -329,6 +336,20 @@ void read_pzem()
       frequency[i] = -1;
     if (isnan(pf[i]))
       pf[i] = -1;
+
+    if (voltage[i] >= th_voltage[i]) {
+      relay_state[i] = LOW;
+    }
+    if (current[i] >= th_current[i]) {
+      relay_state[i] = LOW;
+    }
+    if (power[i] >= th_power[i]) {
+      relay_state[i] = LOW;
+    }
+    if (energy[i] >= th_energy[i]) {
+      relay_state[i] = LOW;
+    }
+    led_state[i] = not(relay_state[0]);
   }
 }
 
@@ -355,10 +376,12 @@ void display_pzem()
     Serial.print(frequency[i]);
     Serial.print(F(", "));
     Serial.print(F("PF: "));
-    Serial.println(pf[i]);
+    Serial.print(pf[i]);
+    Serial.print(F(", "));
+    Serial.print(F("Temp: "));
+    Serial.print(temperature[i]);
+    Serial.println();
   }
-  Serial.print(F("Temperature: "));
-  Serial.println(temperature);
 }
 
 void display_pzem_lcd()
@@ -369,7 +392,7 @@ void display_pzem_lcd()
   lcd.print(String(voltage[0], 2));
 
   lcd.print(F(" C^:"));
-  lcd.print(String(temperature, 2));
+  lcd.print(String(temperature[0], 2));
 
   lcd.setCursor(0, 1);
   lcd.print(F("I1:"));
@@ -380,6 +403,10 @@ void display_pzem_lcd()
   lcd.setCursor(0, 2);
   lcd.print(F("V2:"));
   lcd.print(String(voltage[1], 2));
+
+  lcd.print(F(" C^:"));
+  lcd.print(String(temperature[1], 2));
+
   lcd.setCursor(0, 3);
   lcd.print(F("I2:"));
   lcd.print(String(current[1], 2));
@@ -389,16 +416,35 @@ void display_pzem_lcd()
 
 void read_thermistor()
 {
-  int sensorValue = analogRead(THERMISTOR_CHANNEL);
+  int sensorValue = analogRead(THERMISTOR_CHANNEL1);
 
   float resistance = nominalResistance * (referenceVoltage / (sensorValue * (referenceVoltage / 1023.0) - 1));
 
   // Calculate temperature using the Steinhart-Hart equation or a simpler approximation (Beta parameter method)
-  temperature = 1.0 / (1.0 / (nominalTemperature + 273.15) + log(resistance / nominalResistance) / bCoefficient);
+  temperature[0] = 1.0 / (1.0 / (nominalTemperature + 273.15) + log(resistance / nominalResistance) / bCoefficient);
 
   // Convert from Kelvin to Celsius
-  temperature -= 273.15;
-  temperature = abs(temperature);
+  temperature[0] -= 273.15;
+  temperature[0] = abs(temperature[0]);
+
+  relay_state[0] = temperature[0] >= th_temperature[0];
+  led_state[0] = not(relay_state[0]);
+
+  //
+
+  sensorValue = analogRead(THERMISTOR_CHANNEL2);
+
+  resistance = nominalResistance * (referenceVoltage / (sensorValue * (referenceVoltage / 1023.0) - 1));
+
+  // Calculate temperature using the Steinhart-Hart equation or a simpler approximation (Beta parameter method)
+  temperature[1] = 1.0 / (1.0 / (nominalTemperature + 273.15) + log(resistance / nominalResistance) / bCoefficient);
+
+  // Convert from Kelvin to Celsius
+  temperature[1] -= 273.15;
+  temperature[1] = abs(temperature[1]);
+
+  relay_state[1] = temperature[1] >= th_temperature[1];
+  led_state[1] = not(relay_state[1]);
 }
 
 void function_normal()
@@ -421,33 +467,33 @@ void function_set_pzem2()
 {
 }
 
-void relay1_on()
-{
-  Serial.println(F("D8"));
-  digitalWrite(RELAY1, HIGH);
-  digitalWrite(LED, HIGH);
-}
+// void relay1_on()
+// {
+//   Serial.println(F("D8"));
+//   digitalWrite(RELAY1, HIGH);
+//   digitalWrite(LED, HIGH);
+// }
 
-void relay1_off()
-{
-  Serial.println(F("D9"));
-  digitalWrite(RELAY1, LOW);
-  digitalWrite(LED, LOW);
-}
+// void relay1_off()
+// {
+//   Serial.println(F("D9"));
+//   digitalWrite(RELAY1, LOW);
+//   digitalWrite(LED, LOW);
+// }
 
-void relay2_on()
-{
-  Serial.println(F("D10"));
-  digitalWrite(RELAY2, HIGH);
-  digitalWrite(LED, HIGH);
-}
+// void relay2_on()
+// {
+//   Serial.println(F("D10"));
+//   digitalWrite(RELAY2, HIGH);
+//   digitalWrite(LED, HIGH);
+// }
 
-void relay2_off()
-{
-  Serial.println(F("D11"));
-  digitalWrite(RELAY2, LOW);
-  digitalWrite(LED, LOW);
-}
+// void relay2_off()
+// {
+//   Serial.println(F("D11"));
+//   digitalWrite(RELAY2, LOW);
+//   digitalWrite(LED, LOW);
+// }
 
 void setup()
 {
@@ -455,9 +501,13 @@ void setup()
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
 
-  pinMode(RELAY1, OUTPUT);
-  pinMode(RELAY2, OUTPUT);
-  pinMode(LED, OUTPUT);
+  for (int i = 0; i < 2; i++) {
+    pinMode(relay_pins[i], OUTPUT);  
+    digitalWrite(relay_pins[i], HIGH);
+
+    pinMode(led_pins[i], OUTPUT);  
+    digitalWrite(led_pins[i], LOW);
+  }
 
   th_voltage[0] = EEPROM.read(1);
   th_voltage[1] = EEPROM.read(11);
@@ -470,10 +520,10 @@ void setup()
   th_temperature[0] = EEPROM.read(5);
   th_temperature[1] = EEPROM.read(15);
 
-  button1.attachClick(relay1_on);
-  button2.attachClick(relay1_off);
-  button3.attachClick(relay2_on);
-  button4.attachClick(relay2_off);
+  button1.attachClick(click1);
+  button2.attachClick(click2);
+  button3.attachClick(click3);
+  button4.attachClick(click4);
   button5.attachClick(click5);
 
   lcd.init();
@@ -497,7 +547,12 @@ void loop()
   }
   else
   {
-    // function_normal();
+    function_normal();
+  }
+
+  for (int i = 0; i < 2; i++) {
+    digitalWrite(relay_pins[i], relay_state[i]);
+    digitalWrite(led_pins[i], led_state[i]);
   }
 
   button1.tick();
