@@ -12,6 +12,9 @@
 #define BUTTON3 10
 #define BUTTON4 11
 #define BUTTON5 12
+#define RELAY1 6
+#define RELAY2 7
+#define LED 5
 
 #define FUNC_NORMAL 0
 #define FUNC_PZEM1 1
@@ -304,35 +307,6 @@ void click5()
   level_index = LEVEL_SELECT_FUNC;
 }
 
-void setup()
-{
-  Serial.begin(9600);
-  PZEM_SERIAL1.begin(9600);
-  PZEM_SERIAL2.begin(9600);
-
-  th_voltage[0] = EEPROM.read(1);
-  th_voltage[1] = EEPROM.read(11);
-  th_current[0] = EEPROM.read(2);
-  th_current[1] = EEPROM.read(12);
-  th_power[0] = EEPROM.read(3);
-  th_power[1] = EEPROM.read(13);
-  th_energy[0] = EEPROM.read(4);
-  th_energy[1] = EEPROM.read(14);
-  th_temperature[0] = EEPROM.read(5);
-  th_temperature[1] = EEPROM.read(15);
-
-  button1.attachClick(click1);
-  button2.attachClick(click2);
-  button3.attachClick(click3);
-  button4.attachClick(click4);
-  button5.attachClick(click5);
-
-  lcd.init();
-  lcd.backlight();
-  lcd.setCursor(3, 0);
-  lcd.print("Hello, world!");
-}
-
 void read_pzem()
 {
   for (int i = 0; i < 2; i++)
@@ -445,6 +419,66 @@ void function_set_pzem1()
 
 void function_set_pzem2()
 {
+}
+
+void relay1_on()
+{
+  digitalWrite(RELAY1, HIGH);
+  digitalWrite(LED, HIGH);
+}
+
+void relay1_off()
+{
+  digitalWrite(RELAY1, LOW);
+  digitalWrite(LED, LOW);
+}
+
+void relay2_on()
+{
+  digitalWrite(RELAY2, HIGH);
+  digitalWrite(LED, HIGH);
+}
+
+void relay2_off()
+{
+  digitalWrite(RELAY2, LOW);
+  digitalWrite(LED, LOW);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  PZEM_SERIAL1.begin(9600);
+  PZEM_SERIAL2.begin(9600);
+
+  pinMode(RELAY1, OUTPUT);
+  pinMode(RELAY2, OUTPUT);
+  pinMode(LED, OUTPUT);
+
+  th_voltage[0] = EEPROM.read(1);
+  th_voltage[1] = EEPROM.read(11);
+  th_current[0] = EEPROM.read(2);
+  th_current[1] = EEPROM.read(12);
+  th_power[0] = EEPROM.read(3);
+  th_power[1] = EEPROM.read(13);
+  th_energy[0] = EEPROM.read(4);
+  th_energy[1] = EEPROM.read(14);
+  th_temperature[0] = EEPROM.read(5);
+  th_temperature[1] = EEPROM.read(15);
+
+  button1.attachClick(click1);
+  button2.attachClick(click2);
+  button3.attachClick(click3);
+  button4.attachClick(click4);
+  button5.attachClick(click5);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print(" Smart Customizable");
+  lcd.setCursor(0, 1);
+  lcd.print("  Extension Outlet");
+  delay(3000);
 }
 
 void loop()
