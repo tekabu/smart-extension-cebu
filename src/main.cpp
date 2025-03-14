@@ -423,24 +423,28 @@ void function_set_pzem2()
 
 void relay1_on()
 {
+  Serial.println(F("D8"));
   digitalWrite(RELAY1, HIGH);
   digitalWrite(LED, HIGH);
 }
 
 void relay1_off()
 {
+  Serial.println(F("D9"));
   digitalWrite(RELAY1, LOW);
   digitalWrite(LED, LOW);
 }
 
 void relay2_on()
 {
+  Serial.println(F("D10"));
   digitalWrite(RELAY2, HIGH);
   digitalWrite(LED, HIGH);
 }
 
 void relay2_off()
 {
+  Serial.println(F("D11"));
   digitalWrite(RELAY2, LOW);
   digitalWrite(LED, LOW);
 }
