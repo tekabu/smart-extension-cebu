@@ -338,15 +338,43 @@ void read_pzem()
       pf[i] = -1;
 
     if (voltage[i] >= th_voltage[i]) {
+      Serial.print(F("Socket"));
+      Serial.print(i+1);
+      Serial.print(F("voltage threshold reached: "));
+      Serial.print(voltage[i]);
+      Serial.print(F("/"));
+      Serial.print(th_voltage[i]);
+      Serial.println();
       relay_state[i] = LOW;
     }
     if (current[i] >= th_current[i]) {
+      Serial.print(F("Socket"));
+      Serial.print(i+1);
+      Serial.print(F("current threshold reached: "));
+      Serial.print(current[i]);
+      Serial.print(F("/"));
+      Serial.print(th_current[i]);
+      Serial.println();
       relay_state[i] = LOW;
     }
     if (power[i] >= th_power[i]) {
+      Serial.print(F("Socket"));
+      Serial.print(i+1);
+      Serial.print(F(" power threshold reached: "));
+      Serial.print(power[i]);
+      Serial.print(F("/"));
+      Serial.print(th_power[i]);
+      Serial.println();
       relay_state[i] = LOW;
     }
     if (energy[i] >= th_energy[i]) {
+      Serial.print(F("Socket"));
+      Serial.print(i+1);
+      Serial.print(F(" energy threshold reached: "));
+      Serial.print(energy[i]);
+      Serial.print(F("/"));
+      Serial.print(th_energy[i]);
+      Serial.println();
       relay_state[i] = LOW;
     }
     led_state[i] = not(relay_state[0]);
@@ -427,8 +455,18 @@ void read_thermistor()
   temperature[0] -= 273.15;
   temperature[0] = abs(temperature[0]);
 
-  relay_state[0] = temperature[0] >= th_temperature[0];
-  led_state[0] = not(relay_state[0]);
+  if (temperature[0] >= th_temperature[0])
+  {
+    relay_state[0] = LOW;
+    led_state[0] = not(relay_state[0]);
+  
+    Serial.print(F("Socket1"));
+    Serial.print(F(" temperature threshold reached: "));
+    Serial.print(temperature[0]);
+    Serial.print(F("/"));
+    Serial.print(th_temperature[0]);
+    Serial.println();
+  }
 
   //
 
@@ -443,8 +481,18 @@ void read_thermistor()
   temperature[1] -= 273.15;
   temperature[1] = abs(temperature[1]);
 
-  relay_state[1] = temperature[1] >= th_temperature[1];
-  led_state[1] = not(relay_state[1]);
+  if (temperature[1] >= th_temperature[1])
+  {
+    relay_state[1] = LOW;
+    led_state[1] = not(relay_state[1]);
+  
+    Serial.print(F("Socket2"));
+    Serial.print(F(" temperature threshold reached: "));
+    Serial.print(temperature[1]);
+    Serial.print(F("/"));
+    Serial.print(th_temperature[1]);
+    Serial.println();
+  }
 }
 
 void function_normal()
