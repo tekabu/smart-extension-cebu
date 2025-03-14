@@ -324,6 +324,7 @@ void read_pzem()
     energy[i] = pzems[i].energy();
     frequency[i] = pzems[i].frequency();
     pf[i] = pzems[i].pf();
+    
     if (isnan(voltage[i]))
       voltage[i] = -1;
     if (isnan(current[i]))
@@ -377,7 +378,7 @@ void read_pzem()
       Serial.println();
       relay_state[i] = LOW;
     }
-    led_state[i] = not(relay_state[0]);
+    led_state[i] = not(relay_state[i]);
   }
 }
 
@@ -415,7 +416,7 @@ void display_pzem()
 void display_pzem_lcd()
 {
   lcd.backlight();
-  
+
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(F("V1:"));
