@@ -550,9 +550,19 @@ void loop()
     function_normal();
   }
 
-  for (int i = 0; i < 2; i++) {
-    digitalWrite(relay_pins[i], relay_state[i]);
-    digitalWrite(led_pins[i], led_state[i]);
+  if (function_index == FUNC_NORMAL)
+  {
+    for (int i = 0; i < 2; i++) {
+      digitalWrite(relay_pins[i], relay_state[i]);
+      digitalWrite(led_pins[i], led_state[i]);
+    }
+  }
+  else
+  {
+    for (int i = 0; i < 2; i++) {
+      digitalWrite(relay_pins[i], LOW);
+      digitalWrite(led_pins[i], LOW);
+    }
   }
 
   button1.tick();
