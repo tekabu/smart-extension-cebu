@@ -497,7 +497,7 @@ void loop()
   }
   else
   {
-    function_normal();
+    // function_normal();
   }
 
   button1.tick();
