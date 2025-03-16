@@ -510,21 +510,10 @@ void setup()
 
 void loop()
 {
-  if (function_index == FUNC_PZEM1)
-  {
-    function_set_pzem1();
-  }
-  else if (function_index == FUNC_PZEM2)
-  {
-    function_set_pzem2();
-  }
-  else
-  {
-    function_normal();
-  }
-
   if (function_index == FUNC_NORMAL)
   {
+    function_normal();
+
     for (int i = 0; i < 2; i++) {
       digitalWrite(relay_pins[i], relay_state[i]);
       digitalWrite(led_pins[i], led_state[i]);
