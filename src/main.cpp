@@ -177,6 +177,8 @@ void click1()
     lcd.clear();
     lcd.setCursor(0, 0);
 
+    int starting_index = 0;
+
     if (level_index == LEVEL_SELECT_PARAM1)
     {
       lcd.print(F("SET SOCKET 1"));
@@ -184,42 +186,45 @@ void click1()
     else
     {
       lcd.print(F("SET SOCKET 2"));
+      starting_index = 10;
     }
+
     lcd.setCursor(0, 1);
+    
     if (param_index == PARAM_VOLTAGE)
     {
       param_index = PARAM_CURRENT;
       lcd.print(F("CURRENT"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
+      lcd.print(String(th_current[level_index - 1]));
     }
     else if (param_index == PARAM_CURRENT)
     {
       param_index = PARAM_POWER;
       lcd.print(F("POWER"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
+      lcd.print(String(th_power[level_index - 1]));
     }
     else if (param_index == PARAM_POWER)
     {
       param_index = PARAM_ENERGY;
       lcd.print(F("ENERGY"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
+      lcd.print(String(th_energy[level_index - 1]));
     }
     else if (param_index == PARAM_ENERGY)
     {
       param_index = PARAM_TEMPERATURE;
       lcd.print(F("TEMPERATURE"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
+      lcd.print(String(th_temperature[level_index - 1]));
     }
     else
     {
       param_index = PARAM_VOLTAGE;
       lcd.print(F("VOLTAGE"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
+      lcd.print(String(th_voltage[level_index - 1]));
     }
   }
 }
@@ -462,42 +467,6 @@ void function_normal()
     lastMillis = millis();
   }
 }
-
-void function_set_pzem1()
-{
-}
-
-void function_set_pzem2()
-{
-}
-
-// void relay1_on()
-// {
-//   Serial.println(F("D8"));
-//   digitalWrite(RELAY1, HIGH);
-//   digitalWrite(LED, HIGH);
-// }
-
-// void relay1_off()
-// {
-//   Serial.println(F("D9"));
-//   digitalWrite(RELAY1, LOW);
-//   digitalWrite(LED, LOW);
-// }
-
-// void relay2_on()
-// {
-//   Serial.println(F("D10"));
-//   digitalWrite(RELAY2, HIGH);
-//   digitalWrite(LED, HIGH);
-// }
-
-// void relay2_off()
-// {
-//   Serial.println(F("D11"));
-//   digitalWrite(RELAY2, LOW);
-//   digitalWrite(LED, LOW);
-// }
 
 void setup()
 {
