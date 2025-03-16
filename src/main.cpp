@@ -339,18 +339,18 @@ void read_pzem()
   String dat = "$";
   for (int i = 0; i < 2; i++)
   {
-    dat += String(th_voltage[i], 2);
+    dat += String(voltage[i], 2);
     dat += ",";
-    dat += String(th_current[i], 2);
+    dat += String(current[i], 2);
     dat += ",";
-    dat += String(th_power[i], 2);
+    dat += String(power[i], 2);
     dat += ",";
-    dat += String(th_energy[i], 2);
+    dat += String(energy[i], 2);
     dat += ",";
   }
-  dat += String(th_temperature[0], 2);
+  dat += String(temperature[0], 2);
   dat += ",";
-  dat += String(th_temperature[1], 2);
+  dat += String(temperature[1], 2);
   dat += "#";
 
   Serial.println(dat);
