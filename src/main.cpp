@@ -72,6 +72,69 @@ int led_pins[] = {LED1, LED2};
 int relay_state[] = {HIGH, HIGH};
 int led_state[] = {LOW, LOW};
 
+void add_subtract(int val)
+{
+  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
+  {
+    lcd.setCursor(0, 2);
+    lcd.print(lcd_empty_row);
+
+    int starting_index = 0;
+    if (level_index == LEVEL_SELECT_PARAM2) starting_index = 10;
+
+    if (param_index == PARAM_VOLTAGE)
+    {
+      if (th_voltage[level_index - 1] < 255)
+      {
+        th_voltage[level_index - 1] += val;
+        EEPROM.write(starting_index + 1, th_voltage[level_index - 1]);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_voltage[level_index - 1]));
+    }
+    else if (param_index == PARAM_CURRENT)
+    {
+      if (th_current[level_index - 1] < 255)
+      {
+        th_current[level_index - 1] += val;
+        EEPROM.write(starting_index + 2, th_current[level_index - 1]);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_current[level_index - 1]));
+    }
+    else if (param_index == PARAM_POWER)
+    {
+      if (th_power[level_index - 1] < 255)
+      {
+        th_power[level_index - 1] += val;
+        EEPROM.write(starting_index + 3, th_power[level_index - 1]);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_power[level_index - 1]));
+    }
+    else if (param_index == PARAM_ENERGY)
+    {
+      if (th_energy[level_index - 1] < 255)
+      {
+        th_energy[level_index - 1] += val;
+        EEPROM.write(starting_index + 4, th_energy[level_index - 1]);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_energy[level_index - 1]));
+    }
+    else
+    {
+      if (th_temperature[level_index - 1] < 255)
+      {
+        th_temperature[level_index - 1] += val;
+        EEPROM.write(starting_index + 5, th_temperature[level_index - 1]);
+      }
+      lcd.setCursor(0, 2);
+      lcd.print(String(th_temperature[level_index - 1]));
+    }
+  }
+}
+
 void click1()
 {
   Serial.println(F("Button 1"));
@@ -183,129 +246,13 @@ void click2()
 void click3()
 {
   Serial.println(F("Button 3"));
-  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
-  {
-    lcd.setCursor(0, 2);
-    lcd.print(lcd_empty_row);
-
-    int starting_index = 0;
-    if (level_index == LEVEL_SELECT_PARAM2) starting_index = 10;
-
-    if (param_index == PARAM_VOLTAGE)
-    {
-      if (th_voltage[LEVEL_SELECT_PARAM1 - 1] > 0)
-      {
-        th_voltage[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(starting_index + 1, th_voltage[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else if (param_index == PARAM_CURRENT)
-    {
-      if (th_current[LEVEL_SELECT_PARAM1 - 1] > 0)
-      {
-        th_current[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(starting_index + 2, th_current[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else if (param_index == PARAM_POWER)
-    {
-      if (th_power[LEVEL_SELECT_PARAM1 - 1] > 0)
-      {
-        th_power[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(starting_index + 3, th_power[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else if (param_index == PARAM_ENERGY)
-    {
-      if (th_energy[LEVEL_SELECT_PARAM1 - 1] > 0)
-      {
-        th_energy[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(starting_index + 4, th_energy[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else
-    {
-      if (th_temperature[LEVEL_SELECT_PARAM1 - 1] > 0)
-      {
-        th_temperature[LEVEL_SELECT_PARAM1 - 1]--;
-        EEPROM.write(starting_index + 5, th_temperature[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
-    }
-  }
+  add_subtract(1);
 }
 
 void click4()
 {
   Serial.println(F("Button 4"));
-  if (level_index == LEVEL_SELECT_PARAM1 || level_index == LEVEL_SELECT_PARAM2)
-  {
-    lcd.setCursor(0, 2);
-    lcd.print(lcd_empty_row);
-
-    int starting_index = 0;
-    if (level_index == LEVEL_SELECT_PARAM2) starting_index = 10;
-
-    if (param_index == PARAM_VOLTAGE)
-    {
-      if (th_voltage[LEVEL_SELECT_PARAM1 - 1] < 255)
-      {
-        th_voltage[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(starting_index + 1, th_voltage[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else if (param_index == PARAM_CURRENT)
-    {
-      if (th_current[LEVEL_SELECT_PARAM1 - 1] < 255)
-      {
-        th_current[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(starting_index + 2, th_current[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_current[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else if (param_index == PARAM_POWER)
-    {
-      if (th_power[LEVEL_SELECT_PARAM1 - 1] < 255)
-      {
-        th_power[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(starting_index + 3, th_power[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_power[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else if (param_index == PARAM_ENERGY)
-    {
-      if (th_energy[LEVEL_SELECT_PARAM1 - 1] < 255)
-      {
-        th_energy[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(starting_index + 4, th_energy[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[LEVEL_SELECT_PARAM1 - 1]));
-    }
-    else
-    {
-      if (th_temperature[LEVEL_SELECT_PARAM1 - 1] < 255)
-      {
-        th_temperature[LEVEL_SELECT_PARAM1 - 1]++;
-        EEPROM.write(starting_index + 5, th_temperature[LEVEL_SELECT_PARAM1 - 1]);
-      }
-      lcd.setCursor(0, 2);
-      lcd.print(String(th_temperature[LEVEL_SELECT_PARAM1 - 1]));
-    }
-  }
+  add_subtract(-1);
 }
 
 void click5()
