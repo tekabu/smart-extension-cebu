@@ -335,6 +335,26 @@ void read_pzem()
     }
     led_state[i] = not(relay_state[i]);
   }
+
+  String dat = "$";
+  for (int i = 0; i < 2; i++)
+  {
+    dat += String(th_voltage[i], 2);
+    dat += ",";
+    dat += String(th_current[i], 2);
+    dat += ",";
+    dat += String(th_power[i], 2);
+    dat += ",";
+    dat += String(th_energy[i], 2);
+    dat += ",";
+  }
+  dat += String(th_temperature[0], 2);
+  dat += ",";
+  dat += String(th_temperature[1], 2);
+  dat += "#";
+
+  Serial.println(dat);
+  Serial3.println(dat);
 }
 
 void display_pzem()
@@ -468,6 +488,7 @@ void function_normal()
 void setup()
 {
   Serial.begin(9600);
+  Serial3.begin(9600);
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
 
