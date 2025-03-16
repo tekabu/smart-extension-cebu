@@ -247,7 +247,7 @@ void click2()
     lcd.setCursor(0, 1);
     lcd.print(F("VOLTAGE"));
     lcd.setCursor(0, 2);
-    lcd.print(String(th_voltage[LEVEL_SELECT_PARAM1 - 1]));
+    lcd.print(String(th_voltage[level_index - 1]));
   }
 }
 
