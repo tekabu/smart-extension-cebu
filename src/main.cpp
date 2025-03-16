@@ -177,8 +177,6 @@ void click1()
     lcd.clear();
     lcd.setCursor(0, 0);
 
-    int starting_index = 0;
-
     if (level_index == LEVEL_SELECT_PARAM1)
     {
       lcd.print(F("SET SOCKET 1"));
@@ -186,7 +184,6 @@ void click1()
     else
     {
       lcd.print(F("SET SOCKET 2"));
-      starting_index = 10;
     }
 
     lcd.setCursor(0, 1);
