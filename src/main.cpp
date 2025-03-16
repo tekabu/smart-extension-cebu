@@ -82,6 +82,12 @@ void add_subtract(int val)
     int starting_index = 0;
     if (level_index == LEVEL_SELECT_PARAM2) starting_index = 10;
 
+    Serial.print("Select parameters ");
+    Serial.print(level_index);
+    Serial.print(", starting index ");
+    Serial.print(starting_index);
+    Serial.println();
+
     if (param_index == PARAM_VOLTAGE)
     {
       if (th_voltage[level_index - 1] < 255)
