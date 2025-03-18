@@ -351,10 +351,31 @@ void read_pzem()
   dat += String(temperature[0], 2);
   dat += ",";
   dat += String(temperature[1], 2);
+  dat += ",1";
   dat += "#";
 
   Serial.println(dat);
   Serial3.println(dat);
+
+  delay(1000);
+
+  dat = "$";
+  for (int i = 0; i < 2; i++)
+  {
+    dat += String(th_voltage[i], 2);
+    dat += ",";
+    dat += String(th_current[i], 2);
+    dat += ",";
+    dat += String(th_power[i], 2);
+    dat += ",";
+    dat += String(th_energy[i], 2);
+    dat += ",";
+  }
+  dat += String(th_temperature[0], 2);
+  dat += ",";
+  dat += String(th_temperature[1], 2);
+  dat += ",2";
+  dat += "#";
 }
 
 void display_pzem()
