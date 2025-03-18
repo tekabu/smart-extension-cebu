@@ -348,6 +348,11 @@ void read_pzem()
     dat += String(energy[i], 2);
     dat += ",";
   }
+  if (isnan(temperature[0]))
+    temperature[0] = -1;
+  if (isnan(temperature[1]))
+    temperature[1] = -1;
+    
   dat += String(temperature[0], 2);
   dat += ",";
   dat += String(temperature[1], 2);
