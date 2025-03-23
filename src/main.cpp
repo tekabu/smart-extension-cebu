@@ -122,7 +122,7 @@ void add_subtract(int val)
         EEPROM.write(starting_index + 3, th_power[level_index - 1]);
       }
       lcd.setCursor(0, 2);
-      float _pow = th_power[level_index - 1] * 100;
+      float _pow = th_power[level_index - 1] * 100.0;
       lcd.print(String(_pow, 2));
     }
     else if (param_index == PARAM_ENERGY)
@@ -137,7 +137,7 @@ void add_subtract(int val)
         EEPROM.write(starting_index + 4, th_energy[level_index - 1]);
       }
       lcd.setCursor(0, 2);
-      float _ene = th_energy[level_index - 1] / 100;
+      float _ene = th_energy[level_index - 1] / 100.0;
       Serial.print("Display energy: ");
       Serial.println(String(_ene, 2));
       lcd.print(String(_ene, 2));
@@ -228,7 +228,7 @@ void click1()
       param_index = PARAM_POWER;
       lcd.print(F("POWER"));
       lcd.setCursor(0, 2);
-      double _pow = th_power[level_index - 1] * 100;
+      double _pow = th_power[level_index - 1] * 100.0;
       lcd.print(String(_pow, 2));
     }
     else if (param_index == PARAM_POWER)
@@ -236,7 +236,7 @@ void click1()
       param_index = PARAM_ENERGY;
       lcd.print(F("ENERGY"));
       lcd.setCursor(0, 2);
-      double _ene = th_energy[level_index - 1] / 100;
+      double _ene = th_energy[level_index - 1] / 100.0;
       lcd.print(String(_ene, 2));
     }
     else if (param_index == PARAM_ENERGY)
@@ -360,13 +360,13 @@ void read_pzem()
       Serial.println();
       relay_state[i] = LOW;
     }
-    if (energy[i] >= th_energy[i] / 100) {
+    if (energy[i] >= th_energy[i] / 100.0) {
       Serial.print(F("Socket"));
       Serial.print(i+1);
       Serial.print(F(" energy threshold reached: "));
       Serial.print(energy[i]);
       Serial.print(F("/"));
-      Serial.print(th_energy[i] / 100, 2);
+      Serial.print(th_energy[i] / 100.0, 2);
       Serial.println();
       relay_state[i] = LOW;
     }
@@ -644,7 +644,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  // for (unsigned int i = 0; i < 50 i++) {
+  // for (unsigned int i = 0; i < 50; i++) {
   //   Serial.print("Cleaning room: ");
   //   Serial.println(i);
   //   EEPROM.write(i, 0);
