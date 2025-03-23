@@ -489,18 +489,18 @@ void sendSettingsToESP() {
     String dat = "$";
     for (int i = 0; i < 2; i++)
     {
-      dat += String(th_voltage[i], 2);
+      dat += String(th_voltage[i]);
       dat += ",";
-      dat += String(th_current[i], 2);
+      dat += String(th_current[i]);
       dat += ",";
-      dat += String(th_power[i], 2);
+      dat += String(th_power[i]);
       dat += ",";
-      dat += String(th_energy[i], 2);
+      dat += String(th_energy[i]);
       dat += ",";
     }
-    dat += String(th_temperature[0], 2);
+    dat += String(th_temperature[0]);
     dat += ",";
-    dat += String(th_temperature[1], 2);
+    dat += String(th_temperature[1]);
     dat += ",2";
     dat += "#";
 
