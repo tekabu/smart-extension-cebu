@@ -30,6 +30,7 @@
 #define PARAM_POWER 2
 #define PARAM_ENERGY 3
 #define PARAM_TEMPERATURE 4
+#define PARAM_ALARM 5
 
 PZEM004Tv30 pzems[] = {PZEM004Tv30(PZEM_SERIAL1), PZEM004Tv30(PZEM_SERIAL2)};
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -70,6 +71,7 @@ unsigned int th_current[] = {0, 0};
 unsigned int th_power[] = {0, 0};
 unsigned int th_energy[] = {0, 0};
 unsigned int th_temperature[] = {0, 0};
+unsigned int th_alarm[] = {0, 0};
 
 int relay_pins[] = {RELAY1, RELAY2};
 int led_pins[] = {LED1, LED2};
@@ -132,7 +134,7 @@ void add_subtract(int val)
       lcd.setCursor(0, 2);
       lcd.print(String(th_energy[level_index - 1]));
     }
-    else
+    else if (param_index == PARAM_TEMPERATURE)
     {
       if (th_temperature[level_index - 1] < 255)
       {
@@ -141,6 +143,20 @@ void add_subtract(int val)
       }
       lcd.setCursor(0, 2);
       lcd.print(String(th_temperature[level_index - 1]));
+    }
+    else if (param_index == PARAM_ALARM)
+    {
+      if (th_alarm[level_index - 1] == 1)
+      {
+        th_alarm[level_index - 1] = 0;
+      }
+      else
+      {
+        th_alarm[level_index - 1] = 1;
+      }
+      EEPROM.write(starting_index + 6, th_alarm[level_index - 1]);
+      lcd.setCursor(0, 2);
+      lcd.print(th_alarm[level_index - 1] == 1 ? "ON" : "OFF");
     }
   }
 }
@@ -219,6 +235,13 @@ void click1()
       lcd.print(F("TEMPERATURE"));
       lcd.setCursor(0, 2);
       lcd.print(String(th_temperature[level_index - 1]));
+    }
+    else if (param_index == PARAM_TEMPERATURE)
+    {
+      param_index = PARAM_ALARM;
+      lcd.print(F("ALARM"));
+      lcd.setCursor(0, 2);
+      lcd.print(th_alarm[level_index - 1] == 1 ? "ON" : "OFF");
     }
     else
     {
@@ -360,7 +383,7 @@ void read_pzem()
   dat += String(temperature[0], 2);
   dat += ",";
   dat += String(temperature[1], 2);
-  dat += ",1";
+  dat += ",0,0,1";
   dat += "#";
 
   Serial.println(dat);
@@ -446,7 +469,10 @@ void read_thermistor()
   if (temperature[0] >= th_temperature[0])
   {
     relay_state[0] = LOW;
-    led_state[0] = not(relay_state[0]);
+    if (th_alarm[0] > 0)
+      led_state[0] = not(relay_state[0]);
+    else
+    led_state[0] = LOW;
   
     Serial.print(F("Socket1"));
     Serial.print(F(" temperature threshold reached: "));
@@ -472,7 +498,10 @@ void read_thermistor()
   if (temperature[1] >= th_temperature[1])
   {
     relay_state[1] = LOW;
-    led_state[1] = not(relay_state[1]);
+    if (th_alarm[1])
+      led_state[1] = not(relay_state[1]);
+    else
+    led_state[1] = LOW;
   
     Serial.print(F("Socket2"));
     Serial.print(F(" temperature threshold reached: "));
@@ -501,6 +530,10 @@ void sendSettingsToESP() {
     dat += String(th_temperature[0]);
     dat += ",";
     dat += String(th_temperature[1]);
+    dat += ",";
+    dat += String(th_alarm[0]);
+    dat += ",";
+    dat += String(th_alarm[1]);
     dat += ",2";
     dat += "#";
 
@@ -512,7 +545,7 @@ void sendSettingsToESP() {
 }
 
 void readSettingsFromESP() {
-  int expectedCount = 6;
+  int expectedCount = 7;
   int valueCount = 0;
   float values[expectedCount];
   int commaIndex = 0;
@@ -562,6 +595,9 @@ void readSettingsFromESP() {
 
   th_temperature[esp_level_index - 1] = values[5];
   EEPROM.write(starting_index + 5, th_temperature[esp_level_index - 1]);
+
+  th_alarm[esp_level_index - 1] = values[6];
+  EEPROM.write(starting_index + 6, th_alarm[esp_level_index - 1]);
 
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -621,6 +657,11 @@ void setup()
   th_energy[1] = EEPROM.read(14);
   th_temperature[0] = EEPROM.read(5);
   th_temperature[1] = EEPROM.read(15);
+  th_alarm[0] = EEPROM.read(6);
+  th_alarm[1] = EEPROM.read(16);
+
+  if (th_alarm[0] > 1) th_alarm[0] = 1;
+  if (th_alarm[1] > 1) th_alarm[1] = 1;
 
   button1.attachClick(click1);
   button2.attachClick(click2);
@@ -645,7 +686,10 @@ void loop()
 
     for (int i = 0; i < 2; i++) {
       digitalWrite(relay_pins[i], relay_state[i]);
-      digitalWrite(led_pins[i], led_state[i]);
+      if (th_alarm[i] > 0)
+        digitalWrite(led_pins[i], led_state[i]);
+      else
+        digitalWrite(led_pins[i], LOW);
     }
   }
   else
