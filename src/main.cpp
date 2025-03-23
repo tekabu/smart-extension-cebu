@@ -49,8 +49,11 @@ double pf[] = {0, 0};
 float temperature[] = {0, 0};
 unsigned long lastMillis = 0;
 unsigned long nextReadMillis = 3000;
+unsigned long lastSendSettingsMillis = 0;
+unsigned long nextSendSettingsMillis = 5000;
 
 String lcd_empty_row = "                    ";
+String esp_str = "";
 
 // Constants for the thermistor (for a 10k NTC thermistor)
 const float referenceVoltage = 5.0;  // Arduino reference voltage
@@ -362,26 +365,6 @@ void read_pzem()
 
   Serial.println(dat);
   Serial3.println(dat);
-
-  delay(1000);
-
-  dat = "$";
-  for (int i = 0; i < 2; i++)
-  {
-    dat += String(th_voltage[i], 2);
-    dat += ",";
-    dat += String(th_current[i], 2);
-    dat += ",";
-    dat += String(th_power[i], 2);
-    dat += ",";
-    dat += String(th_energy[i], 2);
-    dat += ",";
-  }
-  dat += String(th_temperature[0], 2);
-  dat += ",";
-  dat += String(th_temperature[1], 2);
-  dat += ",2";
-  dat += "#";
 }
 
 void display_pzem()
@@ -500,6 +483,94 @@ void read_thermistor()
   }
 }
 
+void sendSettingsToESP() {
+  if (millis() - lastSendSettingsMillis >= nextSendSettingsMillis)
+  {
+    String dat = "$";
+    for (int i = 0; i < 2; i++)
+    {
+      dat += String(th_voltage[i], 2);
+      dat += ",";
+      dat += String(th_current[i], 2);
+      dat += ",";
+      dat += String(th_power[i], 2);
+      dat += ",";
+      dat += String(th_energy[i], 2);
+      dat += ",";
+    }
+    dat += String(th_temperature[0], 2);
+    dat += ",";
+    dat += String(th_temperature[1], 2);
+    dat += ",2";
+    dat += "#";
+
+    Serial.println(F("Sending settings"));
+    Serial.println(dat);
+    Serial3.println(dat);
+    lastSendSettingsMillis = millis();
+  }
+}
+
+void readSettingsFromESP() {
+  int expectedCount = 6;
+  int valueCount = 0;
+  float values[expectedCount];
+  int commaIndex = 0;
+  int lastCommaIndex = -1;
+
+  while (commaIndex != -1 && valueCount < expectedCount) {
+    commaIndex = esp_str.indexOf(',', lastCommaIndex + 1);
+    if (commaIndex == -1) {
+      // Last value
+      values[valueCount] = esp_str.substring(lastCommaIndex + 1).toFloat();
+    } else {
+      values[valueCount] = esp_str.substring(lastCommaIndex + 1, commaIndex).toFloat();
+    }
+    lastCommaIndex = commaIndex;
+    valueCount++;
+  }
+
+  // Check for correct number of values
+  if (valueCount != expectedCount) {
+    Serial.println("Error: Incorrect data format");
+    return;
+  }
+
+  int starting_index = -1;
+  int esp_level_index = values[0];
+  if (esp_level_index == 1)
+    starting_index = 0;
+  else if (esp_level_index == 2)
+    starting_index = 10;
+
+  if (starting_index < 0)
+    return;
+
+  Serial.println(F("Saving settings from ESP"));
+
+  th_voltage[esp_level_index - 1] = values[1];
+  EEPROM.write(starting_index + 1, th_voltage[esp_level_index - 1]);
+
+  th_current[esp_level_index - 1] = values[2];
+  EEPROM.write(starting_index + 2, th_current[esp_level_index - 1]);
+
+  th_power[esp_level_index - 1] = values[3];
+  EEPROM.write(starting_index + 3, th_power[esp_level_index - 1]);
+
+  th_energy[esp_level_index - 1] = values[4];
+  EEPROM.write(starting_index + 4, th_energy[esp_level_index - 1]);
+
+  th_temperature[esp_level_index - 1] = values[5];
+  EEPROM.write(starting_index + 5, th_temperature[esp_level_index - 1]);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Socket ");
+  lcd.print(esp_level_index);
+  lcd.print(" Saved");
+  delay(3000);
+}
+
 void function_normal()
 {
   if (millis() - lastMillis >= nextReadMillis)
@@ -509,6 +580,19 @@ void function_normal()
     display_pzem();
     display_pzem_lcd();
     lastMillis = millis();
+  }
+  sendSettingsToESP();
+  
+  while (Serial3.available()) {
+    char c = Serial3.read();
+    if (c == '$') {
+      esp_str = "";
+    } else if (c == '#') {
+      readSettingsFromESP();
+      esp_str = "";
+    } else {
+      esp_str += String(c);
+    }
   }
 }
 
