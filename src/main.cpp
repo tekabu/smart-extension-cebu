@@ -471,6 +471,11 @@ void read_thermistor()
   int sensorValue = analogRead(THERMISTOR_CHANNEL1);
   temperature[0] = read_temp(sensorValue);
 
+  sensorValue = analogRead(THERMISTOR_CHANNEL2);
+  temperature[1] = read_temp(sensorValue);
+}
+
+void check_temp() {
   if (temperature[0] >= th_temperature[0])
   {
     relay_state[0] = LOW;
@@ -486,12 +491,6 @@ void read_thermistor()
     Serial.print(th_temperature[0]);
     Serial.println();
   }
-
-  //
-
-  sensorValue = analogRead(THERMISTOR_CHANNEL2);
-  temperature[1] = read_temp(sensorValue);
-
   if (temperature[1] >= th_temperature[1])
   {
     relay_state[1] = LOW;
@@ -607,10 +606,12 @@ void readSettingsFromESP() {
 
 void function_normal()
 {
+  read_thermistor();
+  
   if (millis() - lastMillis >= nextReadMillis)
   {
     read_pzem();
-    read_thermistor();
+    check_temp();
     display_pzem();
     display_pzem_lcd();
     lastMillis = millis();
