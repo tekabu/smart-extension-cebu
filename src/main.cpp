@@ -96,7 +96,7 @@ void add_subtract(int val)
 
     if (param_index == PARAM_VOLTAGE)
     {
-      if (th_voltage[level_index - 1] < 255)
+      if (th_voltage[level_index - 1] >= 0 && th_voltage[level_index - 1] < 255)
       {
         th_voltage[level_index - 1] += val;
         EEPROM.write(starting_index + 1, th_voltage[level_index - 1]);
@@ -106,7 +106,7 @@ void add_subtract(int val)
     }
     else if (param_index == PARAM_CURRENT)
     {
-      if (th_current[level_index - 1] < 255)
+      if (th_current[level_index - 1] >= 0 && th_current[level_index - 1] < 255)
       {
         th_current[level_index - 1] += val;
         EEPROM.write(starting_index + 2, th_current[level_index - 1]);
@@ -116,20 +116,20 @@ void add_subtract(int val)
     }
     else if (param_index == PARAM_POWER)
     {
-      if (th_power[level_index - 1] < 255)
+      if (th_power[level_index - 1] >= 0 && th_power[level_index - 1] < 255)
       {
         th_power[level_index - 1] += val;
         EEPROM.write(starting_index + 3, th_power[level_index - 1]);
       }
       lcd.setCursor(0, 2);
-      double _pow = th_power[level_index - 1] * 100;
+      float _pow = th_power[level_index - 1] * 100;
       lcd.print(String(_pow, 2));
     }
     else if (param_index == PARAM_ENERGY)
     {
       Serial.print("Current energy: ");
       Serial.println(th_energy[level_index - 1]);
-      if (th_energy[level_index - 1] < 255)
+      if (th_energy[level_index - 1] >= 0 && th_energy[level_index - 1] < 255)
       {
         th_energy[level_index - 1] += val;
         Serial.print("New energy: ");
@@ -137,14 +137,14 @@ void add_subtract(int val)
         EEPROM.write(starting_index + 4, th_energy[level_index - 1]);
       }
       lcd.setCursor(0, 2);
-      double _ene = th_energy[level_index - 1] / 100;
+      float _ene = th_energy[level_index - 1] / 100;
       Serial.print("Display energy: ");
       Serial.println(String(_ene, 2));
       lcd.print(String(_ene, 2));
     }
     else if (param_index == PARAM_TEMPERATURE)
     {
-      if (th_temperature[level_index - 1] < 255)
+      if (th_temperature[level_index - 1] >= 0 && th_temperature[level_index - 1] < 255)
       {
         th_temperature[level_index - 1] += val;
         EEPROM.write(starting_index + 5, th_temperature[level_index - 1]);
