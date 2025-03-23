@@ -642,13 +642,14 @@ void function_normal()
 
 void setup()
 {
+  Serial.begin(9600);
+
   // for (unsigned int i = 0; i < EEPROM.length(); i++) {
   //   Serial.print("Cleaning room: ");
   //   Serial.println(i);
   //   EEPROM.write(i, 0);
   // }
 
-  Serial.begin(9600);
   Serial3.begin(9600);
   PZEM_SERIAL1.begin(9600);
   PZEM_SERIAL2.begin(9600);
