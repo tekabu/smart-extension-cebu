@@ -122,7 +122,8 @@ void add_subtract(int val)
         EEPROM.write(starting_index + 3, th_power[level_index - 1]);
       }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_power[level_index - 1]));
+      double _pow = th_power[level_index - 1] * 100;
+      lcd.print(String(_pow, 2));
     }
     else if (param_index == PARAM_ENERGY)
     {
@@ -132,7 +133,8 @@ void add_subtract(int val)
         EEPROM.write(starting_index + 4, th_energy[level_index - 1]);
       }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[level_index - 1]));
+      double _ene = th_energy[level_index - 1] / 100;
+      lcd.print(String(_ene, 2));
     }
     else if (param_index == PARAM_TEMPERATURE)
     {
@@ -220,14 +222,16 @@ void click1()
       param_index = PARAM_POWER;
       lcd.print(F("POWER"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_power[level_index - 1]));
+      double _pow = th_power[level_index - 1] * 100;
+      lcd.print(String(_pow, 2));
     }
     else if (param_index == PARAM_POWER)
     {
       param_index = PARAM_ENERGY;
       lcd.print(F("ENERGY"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_energy[level_index - 1]));
+      double _ene = th_energy[level_index - 1] / 100;
+      lcd.print(String(_ene, 2));
     }
     else if (param_index == PARAM_ENERGY)
     {
@@ -340,23 +344,23 @@ void read_pzem()
       Serial.println();
       relay_state[i] = LOW;
     }
-    if (power[i] >= th_power[i]) {
+    if (power[i] >= th_power[i] * 100) {
       Serial.print(F("Socket"));
       Serial.print(i+1);
       Serial.print(F(" power threshold reached: "));
       Serial.print(power[i]);
       Serial.print(F("/"));
-      Serial.print(th_power[i]);
+      Serial.print(th_power[i] * 100, 2);
       Serial.println();
       relay_state[i] = LOW;
     }
-    if (energy[i] >= th_energy[i]) {
+    if (energy[i] >= th_energy[i] / 100) {
       Serial.print(F("Socket"));
       Serial.print(i+1);
       Serial.print(F(" energy threshold reached: "));
       Serial.print(energy[i]);
       Serial.print(F("/"));
-      Serial.print(th_energy[i]);
+      Serial.print(th_energy[i] / 100, 2);
       Serial.println();
       relay_state[i] = LOW;
     }
@@ -456,13 +460,12 @@ void display_pzem_lcd()
 float read_temp(int Vo)
 {
   float R1 = 10000;
-  float logR2, R2, T, Tc, Tf;
+  float logR2, R2, T, Tc;
   float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
   R2 = R1 * (1023.0 / (float)Vo - 1.0);
   logR2 = log(R2);
   T = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
   Tc = T - 273.15;
-  Tf = (Tc * 9.0) / 5.0 + 32.0;
   return Tc;
 }
 
@@ -518,9 +521,9 @@ void sendSettingsToESP() {
       dat += ",";
       dat += String(th_current[i]);
       dat += ",";
-      dat += String(th_power[i]);
+      dat += String(th_power[i], 2);
       dat += ",";
-      dat += String(th_energy[i]);
+      dat += String(th_energy[i], 2);
       dat += ",";
     }
     dat += String(th_temperature[0]);
@@ -607,7 +610,7 @@ void readSettingsFromESP() {
 void function_normal()
 {
   read_thermistor();
-  
+
   if (millis() - lastMillis >= nextReadMillis)
   {
     read_pzem();
