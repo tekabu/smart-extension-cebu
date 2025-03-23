@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <OneButton.h>
+#include <SoftwareSerial.h>
 #include <PZEM004Tv30.h>
 #include <LiquidCrystal_I2C.h>
 #include <EEPROM.h>
