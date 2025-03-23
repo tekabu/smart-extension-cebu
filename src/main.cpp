@@ -644,7 +644,7 @@ void setup()
 {
   Serial.begin(9600);
 
-  // for (unsigned int i = 0; i < EEPROM.length(); i++) {
+  // for (unsigned int i = 0; i < 50 i++) {
   //   Serial.print("Cleaning room: ");
   //   Serial.println(i);
   //   EEPROM.write(i, 0);
