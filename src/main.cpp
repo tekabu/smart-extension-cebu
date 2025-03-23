@@ -7,8 +7,8 @@
 
 #define PZEM_SERIAL1 Serial1
 #define PZEM_SERIAL2 Serial2
-#define THERMISTOR_CHANNEL1 A0
-#define THERMISTOR_CHANNEL2 A1
+#define THERMISTOR_CHANNEL1 0
+#define THERMISTOR_CHANNEL2 1
 #define BUTTON1 8
 #define BUTTON2 9
 #define BUTTON3 10
@@ -453,18 +453,23 @@ void display_pzem_lcd()
   lcd.print(String(power[1], 2));
 }
 
+float read_temp(int Vo)
+{
+  float R1 = 10000;
+  float logR2, R2, T, Tc, Tf;
+  float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
+  R2 = R1 * (1023.0 / (float)Vo - 1.0);
+  logR2 = log(R2);
+  T = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
+  Tc = T - 273.15;
+  Tf = (Tc * 9.0) / 5.0 + 32.0;
+  return Tc;
+}
+
 void read_thermistor()
 {
   int sensorValue = analogRead(THERMISTOR_CHANNEL1);
-
-  float resistance = nominalResistance * (referenceVoltage / (sensorValue * (referenceVoltage / 1023.0) - 1));
-
-  // Calculate temperature using the Steinhart-Hart equation or a simpler approximation (Beta parameter method)
-  temperature[0] = 1.0 / (1.0 / (nominalTemperature + 273.15) + log(resistance / nominalResistance) / bCoefficient);
-
-  // Convert from Kelvin to Celsius
-  temperature[0] -= 273.15;
-  temperature[0] = abs(temperature[0]);
+  temperature[0] = read_temp(sensorValue);
 
   if (temperature[0] >= th_temperature[0])
   {
@@ -485,15 +490,7 @@ void read_thermistor()
   //
 
   sensorValue = analogRead(THERMISTOR_CHANNEL2);
-
-  resistance = nominalResistance * (referenceVoltage / (sensorValue * (referenceVoltage / 1023.0) - 1));
-
-  // Calculate temperature using the Steinhart-Hart equation or a simpler approximation (Beta parameter method)
-  temperature[1] = 1.0 / (1.0 / (nominalTemperature + 273.15) + log(resistance / nominalResistance) / bCoefficient);
-
-  // Convert from Kelvin to Celsius
-  temperature[1] -= 273.15;
-  temperature[1] = abs(temperature[1]);
+  temperature[1] = read_temp(sensorValue);
 
   if (temperature[1] >= th_temperature[1])
   {
