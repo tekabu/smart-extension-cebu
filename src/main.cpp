@@ -116,7 +116,7 @@ void add_subtract(int val)
     }
     else if (param_index == PARAM_POWER)
     {
-      if ((th_power[level_index - 1] * 100) < (255 * 100))
+      if (th_power[level_index - 1] < 255)
       {
         th_power[level_index - 1] += val;
         EEPROM.write(starting_index + 3, th_power[level_index - 1]);
@@ -127,7 +127,7 @@ void add_subtract(int val)
     }
     else if (param_index == PARAM_ENERGY)
     {
-      if ((th_energy[level_index - 1] / 100) < (255 / 100))
+      if (th_energy[level_index - 1] < 255)
       {
         th_energy[level_index - 1] += val;
         EEPROM.write(starting_index + 4, th_energy[level_index - 1]);
@@ -521,9 +521,9 @@ void sendSettingsToESP() {
       dat += ",";
       dat += String(th_current[i]);
       dat += ",";
-      dat += String(th_power[i], 2);
+      dat += String(th_power[i]);
       dat += ",";
-      dat += String(th_energy[i], 2);
+      dat += String(th_energy[i]);
       dat += ",";
     }
     dat += String(th_temperature[0]);
