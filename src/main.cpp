@@ -127,13 +127,19 @@ void add_subtract(int val)
     }
     else if (param_index == PARAM_ENERGY)
     {
+      Serial.print("Current energy: ");
+      Serial.println(th_energy[level_index - 1]);
       if (th_energy[level_index - 1] < 255)
       {
         th_energy[level_index - 1] += val;
+        Serial.print("New energy: ");
+        Serial.println(th_energy[level_index - 1]);
         EEPROM.write(starting_index + 4, th_energy[level_index - 1]);
       }
       lcd.setCursor(0, 2);
       double _ene = th_energy[level_index - 1] / 100;
+      Serial.print("Display energy: ");
+      Serial.println(String(_ene, 2));
       lcd.print(String(_ene, 2));
     }
     else if (param_index == PARAM_TEMPERATURE)
@@ -637,6 +643,8 @@ void function_normal()
 void setup()
 {
   // for (unsigned int i = 0; i < EEPROM.length(); i++) {
+  //   Serial.print("Cleaning room: ");
+  //   Serial.println(i);
   //   EEPROM.write(i, 0);
   // }
 
