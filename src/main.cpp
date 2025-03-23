@@ -579,7 +579,8 @@ void readSettingsFromESP() {
   if (starting_index < 0)
     return;
 
-  Serial.println(F("Saving settings from ESP"));
+  Serial.println(F("Saving settings from ESP"));.
+  Serial.println(esp_str);
 
   th_voltage[esp_level_index - 1] = values[1];
   EEPROM.write(starting_index + 1, th_voltage[esp_level_index - 1]);
