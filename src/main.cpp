@@ -466,7 +466,7 @@ void display_pzem_lcd()
   lcd.setCursor(0, 2);
   lcd.print("C:");
   lcd.print(String(_current));
-  lcd.print("C "); 
+  lcd.print("A "); 
   lcd.print("T:");
   lcd.print(String(_temp, 2));
   lcd.print("C");
