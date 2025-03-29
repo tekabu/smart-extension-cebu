@@ -435,33 +435,7 @@ void display_pzem()
 void display_pzem_lcd()
 {
   lcd.backlight();
-
-  // lcd.clear();
-  // lcd.setCursor(0, 0);
-  // lcd.print(F("V1:"));
-  // lcd.print(String(voltage[0], 2));
-
-  // lcd.print(F(" C^:"));
-  // lcd.print(String(temperature[0], 2));
-
-  // lcd.setCursor(0, 1);
-  // lcd.print(F("I1:"));
-  // lcd.print(String(current[0], 2));
-  // lcd.print(F(" P1:"));
-  // lcd.print(String(power[0], 2));
-
-  // lcd.setCursor(0, 2);
-  // lcd.print(F("V2:"));
-  // lcd.print(String(voltage[1], 2));
-
-  // lcd.print(F(" C^:"));
-  // lcd.print(String(temperature[1], 2));
-
-  // lcd.setCursor(0, 3);
-  // lcd.print(F("I2:"));
-  // lcd.print(String(current[1], 2));
-  // lcd.print(F(" P2:"));
-  // lcd.print(String(power[1], 2));
+  lcd.clear();
 
   String outlet = page1 ? "1" : "2";
   int _voltage = page1 ? voltage[0] : voltage[1];
@@ -469,6 +443,10 @@ void display_pzem_lcd()
   int _power = page1 ? power[0] : power[1];
   float _energy = page1 ? energy[0] : energy[1];
   float _temp = page1 ? temperature[0] : temperature[1];
+
+  Serial.print("Displaying Page ");
+  Serial.print(outlet);
+  Serial.println();
 
   lcd.setCursor(0, 0);
   lcd.print("OUTLET ");
