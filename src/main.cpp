@@ -73,6 +73,8 @@ unsigned int th_power[] = {0, 0};
 unsigned int th_energy[] = {0, 0};
 unsigned int th_temperature[] = {0, 0};
 unsigned int th_alarm[] = {0, 0};
+unsigned int th_shutdown[] = {1, 1};
+
 
 int relay_pins[] = {RELAY1, RELAY2};
 int led_pins[] = {LED1, LED2};
@@ -552,6 +554,10 @@ void sendSettingsToESP() {
     dat += String(th_alarm[0]);
     dat += ",";
     dat += String(th_alarm[1]);
+    dat += ",";
+    dat += String(th_shutdown[0]);
+    dat += ",";
+    dat += String(th_shutdown[1]);
     dat += ",2";
     dat += "#";
 
@@ -563,7 +569,7 @@ void sendSettingsToESP() {
 }
 
 void readSettingsFromESP() {
-  int expectedCount = 7;
+  int expectedCount = 8;
   int valueCount = 0;
   float values[expectedCount];
   int commaIndex = 0;
@@ -617,6 +623,8 @@ void readSettingsFromESP() {
 
   th_alarm[esp_level_index - 1] = values[6];
   EEPROM.write(starting_index + 6, th_alarm[esp_level_index - 1]);
+
+  th_shutdown[esp_level_index - 1] = values[7];
 
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -713,7 +721,11 @@ void loop()
     function_normal();
 
     for (int i = 0; i < 2; i++) {
-      digitalWrite(relay_pins[i], relay_state[i]);
+      if (th_shutdown[i] == 1)
+        digitalWrite(relay_pins[i], relay_state[i]);
+      else
+        digitalWrite(relay_pins[i], LOW);
+    
       if (th_alarm[i] > 0)
         digitalWrite(led_pins[i], led_state[i]);
       else
