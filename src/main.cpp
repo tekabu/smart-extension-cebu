@@ -442,7 +442,7 @@ void display_pzem_lcd()
 
   String outlet = page1 ? "1" : "2";
   int _voltage = page1 ? voltage[0] : voltage[1];
-  int _current = page1 ? current[0] : current[1];
+  float _current = page1 ? current[0] : current[1];
   int _power = page1 ? power[0] : power[1];
   float _energy = page1 ? energy[0] : energy[1];
   float _temp = page1 ? temperature[0] : temperature[1];
@@ -465,7 +465,7 @@ void display_pzem_lcd()
 
   lcd.setCursor(0, 2);
   lcd.print("C:");
-  lcd.print(String(_current));
+  lcd.print(String(_current, 2));
   lcd.print("A "); 
   lcd.print("T:");
   lcd.print(String(_temp, 2));
