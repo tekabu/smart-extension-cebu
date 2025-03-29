@@ -396,9 +396,10 @@ void read_pzem()
   dat += String(temperature[0], 2);
   dat += ",";
   dat += String(temperature[1], 2);
-  dat += ",0,0,1";
+  dat += ",0,0,0,0,1"; //s_alarm 1 & 2, s_shutdown 1 & 2, s_level
   dat += "#";
 
+  Serial.println(F("Sending data to ESP"));
   Serial.println(dat);
   Serial3.println(dat);
 }
