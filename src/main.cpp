@@ -52,6 +52,7 @@ unsigned long lastMillis = 0;
 unsigned long nextReadMillis = 3000;
 unsigned long lastSendSettingsMillis = 0;
 unsigned long nextSendSettingsMillis = 5000;
+bool page1 = true;
 
 String lcd_empty_row = "                    ";
 String esp_str = "";
@@ -435,32 +436,66 @@ void display_pzem_lcd()
 {
   lcd.backlight();
 
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(F("V1:"));
-  lcd.print(String(voltage[0], 2));
+  // lcd.clear();
+  // lcd.setCursor(0, 0);
+  // lcd.print(F("V1:"));
+  // lcd.print(String(voltage[0], 2));
 
-  lcd.print(F(" C^:"));
-  lcd.print(String(temperature[0], 2));
+  // lcd.print(F(" C^:"));
+  // lcd.print(String(temperature[0], 2));
+
+  // lcd.setCursor(0, 1);
+  // lcd.print(F("I1:"));
+  // lcd.print(String(current[0], 2));
+  // lcd.print(F(" P1:"));
+  // lcd.print(String(power[0], 2));
+
+  // lcd.setCursor(0, 2);
+  // lcd.print(F("V2:"));
+  // lcd.print(String(voltage[1], 2));
+
+  // lcd.print(F(" C^:"));
+  // lcd.print(String(temperature[1], 2));
+
+  // lcd.setCursor(0, 3);
+  // lcd.print(F("I2:"));
+  // lcd.print(String(current[1], 2));
+  // lcd.print(F(" P2:"));
+  // lcd.print(String(power[1], 2));
+
+  String outlet = page1 ? "1" : "2";
+  int _voltage = page1 ? voltage[0] : voltage[1];
+  int _current = page1 ? current[0] : current[1];
+  int _power = page1 ? power[0] : power[1];
+  float _energy = page1 ? energy[0] : energy[1];
+  float _temp = page1 ? temperature[0] : temperature[1];
+
+  lcd.setCursor(0, 0);
+  lcd.print("OUTLET ");
+  lcd.print(outlet);
 
   lcd.setCursor(0, 1);
-  lcd.print(F("I1:"));
-  lcd.print(String(current[0], 2));
-  lcd.print(F(" P1:"));
-  lcd.print(String(power[0], 2));
+  lcd.print("V:");
+  lcd.print(String(_voltage));
+  lcd.print("V "); 
+  lcd.print("E:");
+  lcd.print(String(_energy, 2));
+  lcd.print("kWh");
 
   lcd.setCursor(0, 2);
-  lcd.print(F("V2:"));
-  lcd.print(String(voltage[1], 2));
-
-  lcd.print(F(" C^:"));
-  lcd.print(String(temperature[1], 2));
+  lcd.print("C:");
+  lcd.print(String(_current));
+  lcd.print("C "); 
+  lcd.print("T:");
+  lcd.print(String(_temp, 2));
+  lcd.print("C");
 
   lcd.setCursor(0, 3);
-  lcd.print(F("I2:"));
-  lcd.print(String(current[1], 2));
-  lcd.print(F(" P2:"));
-  lcd.print(String(power[1], 2));
+  lcd.print("P:");
+  lcd.print(String(_power));
+  lcd.print("W"); 
+
+  page1 = !page1;
 }
 
 float read_temp(int Vo)
