@@ -654,6 +654,9 @@ void check_threshold()
     }
   }
 
+  Serial.print(F("Buzzer: "));
+  Serial.println(buzzer);
+
   if (buzzer > 0) {
     digitalWrite(BUZZER, HIGH); // turn on buzzer
   }
