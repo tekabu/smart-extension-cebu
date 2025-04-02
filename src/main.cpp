@@ -114,7 +114,8 @@ void add_subtract(int val)
         EEPROM.write(starting_index + 2, th_current[level_index - 1]);
       }
       lcd.setCursor(0, 2);
-      lcd.print(String(th_current[level_index - 1]));
+      float _cur = th_current[level_index - 1] / 10.0;
+      lcd.print(String(_cur, 2));
     }
     else if (param_index == PARAM_POWER)
     {
@@ -223,7 +224,8 @@ void click1()
       param_index = PARAM_CURRENT;
       lcd.print(F("CURRENT"));
       lcd.setCursor(0, 2);
-      lcd.print(String(th_current[level_index - 1]));
+      double _cur = th_current[level_index - 1] / 10.0;
+      lcd.print(String(_cur, 2));
     }
     else if (param_index == PARAM_CURRENT)
     {
@@ -624,7 +626,7 @@ void check_threshold()
   for (int i = 0; i < 2; i++)
   {
     if (th_shutdown[i] == 1) {
-      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
+      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] / 10 || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
       {
         digitalWrite(relay_pins[i], LOW); // disable relay
       }
@@ -637,7 +639,7 @@ void check_threshold()
       digitalWrite(relay_pins[i], HIGH); // enable relay
     }
     if (th_alarm[i] == 1) {
-      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
+      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] / 10 || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
       {
         digitalWrite(led_pins[i], LOW); // turn off LED
         buzzer++;
