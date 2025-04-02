@@ -343,7 +343,7 @@ void read_pzem()
       Serial.print(th_voltage[i]);
       Serial.println();
     }
-    if (current[i] >= th_current[i]) {
+    if (current[i] >= th_current[i] / 10) {
       Serial.print(F("Socket"));
       Serial.print(i+1);
       Serial.print(F("current threshold reached: "));
