@@ -14,8 +14,8 @@
 #define BUTTON3 10
 #define BUTTON4 11
 #define BUTTON5 12
-#define RELAY1 7
-#define RELAY2 6
+#define RELAY1 6
+#define RELAY2 7
 #define LED1 4
 #define LED2 5
 #define BUZZER 3
