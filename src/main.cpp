@@ -753,7 +753,7 @@ void loop()
   {
     for (int i = 0; i < 2; i++) {
       digitalWrite(relay_pins[i], LOW);
-      digitalWrite(led_pins[i], LOW);
+      digitalWrite(led_pins[i], HIGH);
     }
     digitalWrite(BUZZER, LOW);
   }
