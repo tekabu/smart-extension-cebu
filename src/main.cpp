@@ -18,7 +18,7 @@
 #define RELAY2 7
 #define LED1 4
 #define LED2 5
-#define BUZZER 3
+#define BUZZER 2
 
 #define FUNC_NORMAL 0
 #define FUNC_PZEM1 1
