@@ -18,6 +18,7 @@
 #define RELAY2 7
 #define LED1 4
 #define LED2 5
+#define BUZZER 3
 
 #define FUNC_NORMAL 0
 #define FUNC_PZEM1 1
@@ -78,8 +79,6 @@ unsigned int th_shutdown[] = {1, 1};
 
 int relay_pins[] = {RELAY1, RELAY2};
 int led_pins[] = {LED1, LED2};
-int relay_state[] = {HIGH, HIGH};
-int led_state[] = {LOW, LOW};
 
 void add_subtract(int val)
 {
@@ -341,7 +340,6 @@ void read_pzem()
       Serial.print(F("/"));
       Serial.print(th_voltage[i]);
       Serial.println();
-      relay_state[i] = LOW;
     }
     if (current[i] >= th_current[i]) {
       Serial.print(F("Socket"));
@@ -351,7 +349,6 @@ void read_pzem()
       Serial.print(F("/"));
       Serial.print(th_current[i]);
       Serial.println();
-      relay_state[i] = LOW;
     }
     if (power[i] >= th_power[i] * 100) {
       Serial.print(F("Socket"));
@@ -361,7 +358,6 @@ void read_pzem()
       Serial.print(F("/"));
       Serial.print(th_power[i] * 100, 2);
       Serial.println();
-      relay_state[i] = LOW;
     }
     if (energy[i] >= th_energy[i] / 100.0) {
       Serial.print(F("Socket"));
@@ -371,9 +367,7 @@ void read_pzem()
       Serial.print(F("/"));
       Serial.print(th_energy[i] / 100.0, 2);
       Serial.println();
-      relay_state[i] = LOW;
     }
-    led_state[i] = not(relay_state[i]);
   }
 
   String dat = "$";
@@ -502,13 +496,7 @@ void read_thermistor()
 
 void check_temp() {
   if (temperature[0] >= th_temperature[0])
-  {
-    relay_state[0] = LOW;
-    if (th_alarm[0] > 0)
-      led_state[0] = not(relay_state[0]);
-    else
-    led_state[0] = LOW;
-  
+  {  
     Serial.print(F("Socket1"));
     Serial.print(F(" temperature threshold reached: "));
     Serial.print(temperature[0]);
@@ -517,13 +505,7 @@ void check_temp() {
     Serial.println();
   }
   if (temperature[1] >= th_temperature[1])
-  {
-    relay_state[1] = LOW;
-    if (th_alarm[1])
-      led_state[1] = not(relay_state[1]);
-    else
-    led_state[1] = LOW;
-  
+  {  
     Serial.print(F("Socket2"));
     Serial.print(F(" temperature threshold reached: "));
     Serial.print(temperature[1]);
@@ -635,6 +617,49 @@ void readSettingsFromESP() {
   delay(3000);
 }
 
+void check_threshold()
+{
+  int buzzer = 0;
+
+  for (int i = 0; i < 2; i++)
+  {
+    if (th_shutdown[i] == 1) {
+      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
+      {
+        digitalWrite(relay_pins[i], HIGH); // disable relay
+      }
+      else
+      {
+        digitalWrite(relay_pins[i], LOW); // enable relay
+      }
+    }
+    else {
+      digitalWrite(relay_pins[i], LOW); // enable relay
+    }
+    if (th_alarm[i] == 1) {
+      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
+      {
+        digitalWrite(led_pins[i], LOW); // turn off LED
+        buzzer++;
+      }
+      else
+      {
+        digitalWrite(led_pins[i], HIGH); // turn on LED
+      }
+    }
+    else {
+      digitalWrite(led_pins[i], HIGH); // turn on LED
+    }
+  }
+
+  if (buzzer > 0) {
+    digitalWrite(BUZZER, HIGH); // turn on buzzer
+  }
+  else {
+    digitalWrite(BUZZER, LOW); // turn off buzzer
+  }
+}
+
 void function_normal()
 {
   read_thermistor();
@@ -647,6 +672,7 @@ void function_normal()
     display_pzem_lcd();
     lastMillis = millis();
   }
+  check_threshold();
   sendSettingsToESP();
   
   while (Serial3.available()) {
@@ -684,6 +710,9 @@ void setup()
     digitalWrite(led_pins[i], LOW);
   }
 
+  pinMode(BUZZER, OUTPUT);
+  digitalWrite(BUZZER, LOW);
+
   th_voltage[0] = EEPROM.read(1);
   th_voltage[1] = EEPROM.read(11);
   th_current[0] = EEPROM.read(2);
@@ -717,21 +746,8 @@ void setup()
 
 void loop()
 {
-  if (function_index == FUNC_NORMAL)
-  {
+  if (function_index == FUNC_NORMAL) {
     function_normal();
-
-    for (int i = 0; i < 2; i++) {
-      if (th_shutdown[i] == 1)
-        digitalWrite(relay_pins[i], relay_state[i]);
-      else
-        digitalWrite(relay_pins[i], LOW);
-    
-      if (th_alarm[i] > 0)
-        digitalWrite(led_pins[i], led_state[i]);
-      else
-        digitalWrite(led_pins[i], LOW);
-    }
   }
   else
   {
@@ -739,6 +755,7 @@ void loop()
       digitalWrite(relay_pins[i], LOW);
       digitalWrite(led_pins[i], LOW);
     }
+    digitalWrite(BUZZER, LOW);
   }
 
   button1.tick();
