@@ -626,15 +626,15 @@ void check_threshold()
     if (th_shutdown[i] == 1) {
       if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
       {
-        digitalWrite(relay_pins[i], HIGH); // disable relay
+        digitalWrite(relay_pins[i], LOW); // disable relay
       }
       else
       {
-        digitalWrite(relay_pins[i], LOW); // enable relay
+        digitalWrite(relay_pins[i], HIGH); // enable relay
       }
     }
     else {
-      digitalWrite(relay_pins[i], LOW); // enable relay
+      digitalWrite(relay_pins[i], HIGH); // enable relay
     }
     if (th_alarm[i] == 1) {
       if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
@@ -753,7 +753,7 @@ void loop()
   {
     for (int i = 0; i < 2; i++) {
       digitalWrite(relay_pins[i], LOW);
-      digitalWrite(led_pins[i], HIGH);
+      digitalWrite(led_pins[i], LOW);
     }
     digitalWrite(BUZZER, LOW);
   }
