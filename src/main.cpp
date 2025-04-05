@@ -626,7 +626,7 @@ void check_threshold()
   for (int i = 0; i < 2; i++)
   {
     if (th_shutdown[i] == 1) {
-      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] / 10 || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
+      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] / 10 || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0 || temperature[i] >= th_temperature[i])
       {
         digitalWrite(relay_pins[i], LOW); // disable relay
       }
@@ -639,7 +639,7 @@ void check_threshold()
       digitalWrite(relay_pins[i], HIGH); // enable relay
     }
     if (th_alarm[i] == 1) {
-      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] / 10 || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0)
+      if (voltage[i] >= th_voltage[i] || current[i] >= th_current[i] / 10 || power[i] >= th_power[i] * 100 || energy[i] >= th_energy[i] / 100.0 || temperature[i] >= th_temperature[i])
       {
         digitalWrite(led_pins[i], LOW); // turn off LED
         buzzer++;
@@ -653,9 +653,6 @@ void check_threshold()
       digitalWrite(led_pins[i], HIGH); // turn on LED
     }
   }
-
-  Serial.print(F("Buzzer: "));
-  Serial.println(buzzer);
 
   if (buzzer > 0) {
     digitalWrite(BUZZER, HIGH); // turn on buzzer
